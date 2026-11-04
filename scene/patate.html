@@ -438,7 +438,7 @@ function frame(t) {
     c.position.y = (p.y ?? 0) + (ud.legs && ud.isBird ? 0 : 0) + 0.0;
     ud.body.position.y = ud.baseY + bounce * (singer ? 0.06 : 0.03) + (p.hop ? Math.abs(Math.sin(tt * 9)) * 0.15 : 0);
     ud.body.rotation.z = Math.sin(tt / beat * Math.PI) * (singer ? 0.06 : 0.03) + (p.tilt ?? 0);
-    c.rotation.y = ry + (p.spin ? tt * 4 : 0);
+    c.rotation.y = ry + (p.spin ? Math.sin(tt * 5) * 0.55 : 0); // « spin » = déhanché, jamais de dos
     // regard
     const look = p.look ? aimAt(p.look) : camera.position;
     for (const pu of ud.eyes.pupils) { pu.parent.getWorldPosition(tmpV); const d = look.clone().sub(tmpV).normalize(); pu.position.x = clamp(d.x, -0.5, 0.5) * 0.05; pu.position.y = clamp(d.y, -0.5, 0.5) * 0.04; }
