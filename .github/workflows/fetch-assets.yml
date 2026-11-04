@@ -1,0 +1,25 @@
+name: fetch-assets
+# Récupère les zips du Drive (lien temporaire) et les commit dans assets/
+on:
+  push:
+    paths: ['.github/fetch-trigger']
+permissions:
+  contents: write
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download
+        run: |
+          mkdir -p assets
+          dl() { curl -fsSL -o "assets/$2" "https://drive.usercontent.google.com/download?id=$1&export=download&confirm=t"; ls -l "assets/$2"; file "assets/$2"; }
+          dl 1-Uw39xYdCJSIYuJLsfQvQjdSxclsHsbc MachineTikTok_sources.zip
+          dl 1rOa7CubFPqdJ7v3TJ7qVP6BsrIMFpeM_ PatateStory_S1_30episodes.zip
+      - name: Commit
+        run: |
+          git config user.name "machine-tiktok-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add assets
+          git commit -m "assets: zips sources + MP3 S1 depuis le Drive"
+          git push
