@@ -1,6 +1,7 @@
 name: fetch-assets
 # Récupère les zips du Drive (lien temporaire) et les commit dans assets/
 on:
+  workflow_dispatch:
   push:
     paths: ['.github/fetch-trigger']
 permissions:

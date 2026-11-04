@@ -1,0 +1,48 @@
+// Ép 2 – Le jumeau maléfique (afro)
+const P = (x, z, o = {}) => ({ pos: [x, z], ...o });
+export default {
+  bpm: 102, set: 'fridge',
+  cast: ['patate', 'poireau', 'poireauNoir'],
+  events: [
+    { t: 0, set: { patate: P(0, 1.2, { mood: 'shock', armsUp: true }), poireau: P(-1.3, 0.0, { rot: 0.35, look: 'patate' }), poireauNoir: P(1.3, 0.0, { rot: -0.35, look: 'patate' }), shake: 1, shakeT: 0, drama: 1 } },
+    { t: 13.9, set: { drama: 0, patate: P(-1.0, 1.4, { look: 'poireauNoir' }), poireau: undefined, poireauNoir: P(0.6, 0.0, { enter: 13.9, from: 6, rot: -0.3, mood: 'sus', look: 'patate' }) } },
+    { t: 22.6, set: { patate: P(0, 1.3, { mood: 'shock' }), poireau: P(-1.2, 0.0, { rot: 0.35, look: 'patate' }), poireauNoir: P(1.2, 0.0, { rot: -0.35, mood: 'sus', look: 'patate' }) } },
+    { t: 27.2, set: { patate: P(0, 1.3, { cry: true }) } },
+    { t: 33.0, set: { patate: P(-0.6, 1.2, { mood: 'angry', look: 'poireau' }), poireau: P(0.7, 0.4, { rot: -0.3, look: 'patate' }), poireauNoir: undefined } },
+    { t: 37.3, set: { poireauNoir: P(1.6, -0.4, { enter: 37.3, from: 6, rot: -0.5, mood: 'sus', look: 'patate' }) } },
+    { t: 42.2, set: { poireau: P(0.7, 0.4, { rot: -0.3, look: 'patate', armsUp: true, talk: true }), poireauNoir: undefined } },
+    { t: 46.3, set: { patate: P(-0.4, 1.0, { look: 'poireau', lean: -0.15 }), poireau: P(0.4, 0.6, { rot: -0.3, look: 'patate' }) } },
+    { t: 52.3, set: { patate: P(0, 1.3, { mood: 'shock', armsUp: true }), poireau: P(-1.2, 0.0, { rot: 0.35, look: 'patate' }), poireauNoir: P(1.2, 0.0, { rot: -0.35, mood: 'sus', look: 'patate' }) } },
+    { t: 61.0, set: { patate: P(0, 1.3, { cry: true, spin: true }) } },
+    { t: 65.5, set: { patate: P(0, 1.3, { cry: true }), shake: 1, shakeT: 65.5 } },
+    { t: 70.1, set: { patate: P(-0.9, 1.2, { mood: 'sus', look: 'poireau' }), poireauNoir: undefined, poireau: P(0.5, 0.2, { rot: -0.4, kiss: true, look: 'patate' }), drama: 1, spokenBy: 'LA PATATE' } },
+    { t: 73.2, set: { patate: P(-0.9, 1.2, { mood: 'shock', armsUp: true }), shake: 1, shakeT: 73.2 } },
+  ],
+  shots: [
+    { t: 0, from: [0, 1.6, 4.4], to: [0, 1.4, 3.9], aim: 'patate', aimDy: 0.55, dur: 1.4, fov: 42 },
+    { t: 5.5, from: [0, 1.8, 6.4], to: [0, 1.7, 5.6], look: [0, 1.4, 0.2], dur: 8 },
+    { t: 13.9, from: [0.9, 1.2, 3.4], to: [0.6, 1.9, 2.4], aim: 'poireauNoir', aimDy: 0.5, dur: 4, fov: 36 },
+    { t: 18.4, from: [-2.0, 1.6, 4.2], to: [-1.4, 1.6, 3.8], look: [0.4, 1.4, 0.2], dur: 4 },
+    { t: 22.6, from: [0, 2.2, 6.6], to: [0, 1.8, 5.4], look: [0, 1.3, 0], dur: 4.6 },
+    { t: 27.2, from: [0, 1.4, 3.6], to: [0, 1.5, 3.0], aim: 'patate', dur: 5, fov: 40 },
+    { t: 33.0, from: [-0.3, 1.5, 4.4], to: [0, 1.5, 4.0], look: [0, 1.2, 0.6], dur: 4 },
+    { t: 37.3, from: [1.4, 2.0, 3.0], to: [1.4, 2.0, 2.4], aim: 'poireauNoir', aimDy: 0.5, dur: 4.6, fov: 34 },
+    { t: 42.2, from: [0.4, 1.6, 3.4], to: [0.5, 1.9, 2.8], aim: 'poireau', aimDy: 0.4, dur: 4, fov: 36 },
+    { t: 46.3, from: [0, 1.5, 3.8], to: [0, 1.55, 3.3], look: [0, 1.3, 0.8], dur: 6 },
+    { t: 52.3, from: [0, 2.2, 6.6], to: [0, 1.8, 5.4], look: [0, 1.3, 0], dur: 4.6 },
+    { t: 56.8, from: [1.8, 1.4, 3.8], to: [1.2, 1.5, 3.4], look: [0, 1.4, 0.4], dur: 4 },
+    { t: 61.0, from: [0, 1.4, 3.6], to: [0, 1.5, 3.0], aim: 'patate', dur: 4, fov: 40 },
+    { t: 65.5, from: [0, 2.6, 6.5], to: [0, 2.0, 5.2], look: [0, 1.2, 0], dur: 4.6, shake: 0.3 },
+    { t: 70.1, from: [1.4, 2.0, 2.0], to: [1.1, 2.0, 1.5], look: [0.62, 2.1, 0.35], dur: 3, fov: 30 },
+    { t: 73.2, from: [-0.9, 1.6, 3.4], to: [-0.9, 1.55, 3.0], aim: 'patate', aimDy: 0.1, dur: 0.5, fov: 40 },
+  ],
+  stamps: [
+    { t: 14.0, text: 'LE JUMEAU !', d: 1.4 },
+    { t: 70.3, text: 'ORANGE ?!', d: 2.0, rot: 6 },
+  ],
+  lowers: [
+    { t: 15, text: 'POIREAU NOIR · LE JUMEAU BELGE' },
+    { t: 33.4, text: 'LE POIREAU · L’EX' },
+  ],
+  flashes: [13.9, 22.6, 52.3, 65.5, 70.1, 73.2],
+};
