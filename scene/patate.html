@@ -11,7 +11,15 @@
   canvas { display: block; }
   .ov { position: absolute; left: 0; right: 0; pointer-events: none; }
   /* Ragot crié : la grosse phrase du début */
-  #ragot { top: 250px; padding: 0 70px; text-align: center; }
+  #hook { top: 210px; text-align: center; }
+  #hook .tag { display: inline-block; font-family: 'Anton'; font-size: 40px; color: #111; background: #ffe14a; padding: 6px 20px; letter-spacing: 6px; border-radius: 10px; }
+  #hook .h { display: block; margin-top: 14px; font-family: 'Lucky'; font-size: 112px; line-height: 1.02; color: #fff; -webkit-text-stroke: 16px #e8102a; paint-order: stroke fill; text-shadow: 0 12px 0 #5a0010; padding: 0 60px; }
+  .door { top: 0; bottom: 0; width: 540px; background: linear-gradient(90deg, #0b0f14, #1d2731); }
+  #doorL { left: 0; right: auto; } #doorR { right: 0; left: auto; transform-origin: right; }
+  #doorGlow { inset: 0; background: radial-gradient(ellipse at 50% 50%, rgba(255,250,225,.95), rgba(255,250,225,0) 60%); opacity: 0; }
+  #karaoke.big .line { font-size: 104px; -webkit-text-stroke: 18px #000; }
+  #karaoke .w.hide { visibility: hidden; }
+  #ragot { display: none !important; }
   #ragot .box { display: inline-block; background: #e8102a; color: #fff; font-family: 'Lucky'; font-size: 92px; line-height: 1.05;
     padding: 34px 40px 22px; border: 10px solid #fff; border-radius: 28px; box-shadow: 0 18px 0 #7a0012, 0 30px 60px rgba(0,0,0,.55);
     text-shadow: 0 6px 0 #7a0012; letter-spacing: 1px; }
@@ -50,6 +58,8 @@
 <div id="partie" class="ov"></div>
 <div id="lower" class="ov"></div>
 <div id="stamp" class="ov"><span></span></div>
+<div id="hook" class="ov"><span class="tag">RAGOT DU FRIGO</span><span class="h"></span></div>
+<div id="doorGlow" class="ov"></div><div id="doorL" class="ov door"></div><div id="doorR" class="ov door"></div>
 <div id="ragot" class="ov"><div class="box"><span class="tag">★ RAGOT ★</span><span class="txt"></span></div></div>
 <div id="karaoke" class="ov"><div class="who"></div><div class="line"></div></div>
 <div id="suivre" class="ov"><div class="a">À SUIVRE…</div><div class="b"></div></div>
@@ -484,21 +494,25 @@ const $ = s => document.querySelector(s);
 $('#partie').textContent = `PARTIE ${EP}/30`;
 $('#suivre .b').textContent = EP < 30 ? `PARTIE ${EP + 1}/30 SUR LE PROFIL` : 'SAISON 2 BIENTÔT';
 $('#ragot .txt').textContent = data.shout;
+$('#hook .h').textContent = script.hook || '';
+const I0 = script.introAt || 0; // temps chanson où commence la vidéo publiée
 let lastLineKey = null;
 function overlay(t, tt, st) {
   // ragot : visible dès 0 s jusqu'à la fin de la phrase criée
   const shoutEnd = data.lines[0].t1 + 0.4;
-  const rg = $('#ragot');
-  if (t < shoutEnd) {
-    rg.style.display = 'block';
-    const pop = t < 0.25 ? 0.6 + 0.4 * ease(t / 0.25) * 1.05 : 1 + 0.03 * Math.sin(t * 9);
-    rg.style.transform = `scale(${pop}) rotate(${Math.sin(t * 7) * 1.2}deg)`;
-    rg.style.opacity = t > shoutEnd - 0.3 ? (shoutEnd - t) / 0.3 : 1;
-  } else rg.style.display = 'none';
+  const vt = t - I0; // temps vidéo publiée
+  const hk = $('#hook');
+  if (t < shoutEnd) { hk.style.display = 'block'; const pop = clamp(vt / 0.18); hk.style.transform = `scale(${lerp(1.2, 1, ease(pop))}) rotate(${-3 + Math.sin(t * 6) * 1}deg)`; hk.style.opacity = t > shoutEnd - 0.3 ? (shoutEnd - t) / 0.3 : 1; }
+  else hk.style.display = 'none';
+  // porte du frigo qui s'ouvre (0 → 0,35 s)
+  const o = 0.55 + 0.45 * ease(clamp(vt / 0.3)); // la porte est déjà entrouverte à la 1re image
+  $('#doorL').style.transform = `translateX(${-o * 560}px)`; $('#doorR').style.transform = `translateX(${o * 560}px)`;
+  $('#doorL').style.display = $('#doorR').style.display = o >= 1 ? 'none' : 'block';
+  $('#doorGlow').style.opacity = vt < 0.6 ? Math.sin(Math.PI * clamp(vt / 0.6)) * 0.9 : 0;
   // karaoké (pas pendant le ragot, qui affiche déjà la phrase)
   const kk = $('#karaoke');
-  const l = t >= shoutEnd - 0.2 && t < DUR - FREEZE ? lineAt(tt) : null;
-  if (!l || l === data.lines[0]) { kk.style.display = 'none'; lastLineKey = null; }
+  const l = t < DUR - FREEZE ? (t < shoutEnd ? data.lines[0] : lineAt(tt)) : null;
+  if (!l) { kk.style.display = 'none'; lastLineKey = null; }
   else {
     kk.style.display = 'block';
     const keyL = l.t0;
@@ -507,7 +521,9 @@ function overlay(t, tt, st) {
       lastLineKey = keyL;
     }
     const spans = kk.querySelectorAll('.w');
-    l.words.forEach((w, i) => { spans[i].className = 'w' + (tt >= w.t0 ? (tt <= w.t1 + 0.05 ? ' on now' : ' on') : ''); });
+    const isShout = l === data.lines[0];
+    kk.classList.toggle('big', isShout);
+    l.words.forEach((w, i) => { const said = tt >= w.t0 - 0.05; spans[i].className = 'w' + (said ? (tt <= w.t1 + 0.05 ? ' on now' : ' on') : (isShout ? ' hide' : '')); });
     const ap = clamp((tt - l.t0 + 0.25) / 0.18);
     kk.style.transform = `scale(${0.85 + 0.15 * ease(ap)})`;
     $('#karaoke .who').textContent = l.section === 'Spoken' ? (st.spokenBy || '') : '';

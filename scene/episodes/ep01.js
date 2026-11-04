@@ -1,10 +1,12 @@
 // Ép 1 – Trahison dans le frigo (reggaeton 94 BPM)
 const P = (x, z, o = {}) => ({ pos: [x, z], ...o });
 export default {
-  bpm: 94, set: 'fridge',
+  bpm: 94, set: 'fridge', introAt: 1.13, hook: 'FLAGRANT DÉLIT',
   cast: ['patate', 'poireau', 'carotte', 'michel', 'poireauNoir'],
   events: [
     { t: 0, set: { patate: P(0, 1.2, { mood: 'shock', armsUp: true }), poireauNoir: P(-0.55, -1.6, { rot: 0.9, lean: -0.25, look: 'carotte' }), carotte: P(0.55, -1.6, { rot: -0.9, lean: 0.25, look: 'poireauNoir' }), shake: 1, shakeT: 0, drama: 1 } },
+    { t: 2.7, set: { poireauNoir: P(-0.55, -1.6, { rot: 0.5, mood: 'shock' }), carotte: P(0.55, -1.6, { rot: -0.5, mood: 'shock' }), shake: 1, shakeT: 2.7 } },
+    { t: 3.9, set: { poireauNoir: P(-0.55, -1.6, { rot: 0.9, lean: -0.25, look: 'carotte' }), carotte: P(0.55, -1.6, { rot: -0.9, lean: 0.25, look: 'poireauNoir' }) } },
     { t: 9.4, set: { patate: P(0, 1.2, { cry: true }), drama: 0 } },
     { t: 17.0, set: { patate: P(0, 1.2, { cry: true, spin: true }) } },
     { t: 20.6, set: { patate: P(0, 1.2, { armsUp: true, mood: 'angry' }), shake: 1, shakeT: 20.6 } },
@@ -21,7 +23,10 @@ export default {
     { t: 70.4, set: { patate: P(-0.9, 1.4, { mood: 'shock', armsUp: true }), shake: 1, shakeT: 70.4, spokenBy: 'LA PATATE' } },
   ],
   shots: [
-    { t: 0, from: [0, 1.7, 5.2], to: [0, 1.6, 4.4], aim: 'patate', aimDy: 2.4, dur: 1.4, fov: 42 },
+    { t: 0, from: [0.3, 1.65, 0.5], to: [0.1, 1.55, 0.15], look: [0, 1.45, -1.6], dur: 1.0, fov: 46 },
+    { t: 1.93, from: [0, 1.4, 2.3], to: [0, 1.4, 2.05], aim: 'patate', aimDy: 1.0, dur: 0.8, fov: 42, shake: 0.8 },
+    { t: 2.7, from: [-0.2, 1.6, 0.45], to: [0, 1.55, 0.2], look: [0, 1.5, -1.6], dur: 1.2, fov: 46 },
+    { t: 3.9, from: [0, 1.7, 5.2], to: [0, 1.6, 4.4], aim: 'patate', aimDy: 1.5, dur: 0.9, fov: 42 },
     { t: 4.8, from: [1.8, 1.7, 3.6], to: [1.2, 1.5, 2.4], look: [0, 1.4, -1.6], dur: 4.6, fov: 38 },
     { t: 9.4, from: [0, 1.5, 4.8], to: [0, 1.6, 6.2], look: [0, 1.0, -0.2], dur: 3 },
     { t: 12.0, from: [-1.6, 1.5, 2.6], to: [-1.0, 1.5, 1.8], look: [0, 1.4, -1.6], dur: 4, fov: 38 },
@@ -50,5 +55,5 @@ export default {
     { t: 38.2, text: 'MICHEL · LE PIGEON QUI SAIT TOUT' },
     { t: 42.6, text: 'LA CAROTTE · LA RIVALE' },
   ],
-  flashes: [9.4, 20.6, 47.5, 64.1, 67.0, 70.4],
+  flashes: [1.93, 2.7, 3.9, 9.4, 20.6, 47.5, 64.1, 67.0, 70.4],
 };

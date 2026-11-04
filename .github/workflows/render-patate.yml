@@ -1,0 +1,32 @@
+name: render-patate
+# Rend les épisodes Patate Story (vidéo 1080x1920) et les met en artefact téléchargeable.
+on:
+  workflow_dispatch:
+    inputs:
+      episodes: { description: 'Épisodes, séparés par des espaces', default: '1 2 3' }
+  push:
+    paths: ['.github/render-trigger']
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - run: sudo apt-get update && sudo apt-get install -y ffmpeg unzip bc
+      - run: npm install --no-audit --no-fund && npm install --no-save playwright@1.48.2 && npx playwright install --with-deps chromium
+      - run: mkdir -p mp3 out && unzip -q -o assets/PatateStory_S1_30episodes.zip -d mp3
+      - name: Rendu
+        run: |
+          EPS="${{ github.event.inputs.episodes || '1 2 3' }}"
+          for e in $EPS; do
+            n=$(printf %02d $e)
+            node tools/render.js $e - out/ep${n}_silent.mp4 --workers 4
+            tools/finalize.sh $e out/ep${n}_silent.mp4 mp3/PatateStory_S1_ep${n}.mp3 out/PatateStory_ep${n}.mp4
+          done
+      - uses: actions/upload-artifact@v4
+        with:
+          name: patate-story-mp4
+          path: out/PatateStory_ep*.mp4
+          retention-days: 30

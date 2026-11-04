@@ -1,10 +1,12 @@
 // Ép 3 – Michel savait tout (pop-rock) – confessionnal
 const P = (x, z, o = {}) => ({ pos: [x, z], ...o });
 export default {
-  bpm: 128, set: 'confessionnal',
+  bpm: 128, set: 'confessionnal', introAt: 0.57, hook: 'IL SAVAIT TOUT',
   cast: ['patate', 'michel'],
   events: [
-    { t: 0, set: { set: 'confessionnal', patate: P(0, 1.0, { mood: 'angry', armsUp: true }), michel: P(0, -0.4, { y: 0.5, look: 'patate', mood: 'shock' }), shake: 1, shakeT: 0, drama: 1 } },
+    { t: 0, set: { set: 'confessionnal', patate: P(-1.0, 1.0, { mood: 'angry', armsUp: true, look: 'michel' }), michel: P(0, -0.4, { y: 0.5, mood: 'sus' }), shake: 1, shakeT: 0, drama: 1 } },
+    { t: 2.1, set: { michel: P(0, -0.4, { y: 0.5, mood: 'shock', flap: true, hop: true, look: 'patate' }), shake: 1, shakeT: 2.1 } },
+    { t: 3.1, set: { patate: P(0, 1.0, { mood: 'angry', armsUp: true }), michel: P(0, -0.4, { y: 0.5, look: 'patate', mood: 'shock' }) } },
     { t: 10.6, set: { drama: 0, patate: P(-0.8, 1.0, { look: 'michel', mood: 'angry' }), michel: P(0.5, -0.4, { y: 0.5, look: 'patate' }) } },
     { t: 17.2, set: { frite: { pos: [-0.25, 1.4, 1.3] } } },
     { t: 21.2, set: { patate: P(-0.8, 1.0, { look: 'michel', armsUp: true }), shake: 1, shakeT: 21.2 } },
@@ -17,7 +19,10 @@ export default {
     { t: 58.5, set: { patate: undefined, michel: P(0, -0.4, { y: 0.5, mood: 'sus' }), singer: 'michel', drama: 1, spokenBy: 'MICHEL' } },
   ],
   shots: [
-    { t: 0, from: [0, 1.8, 6.2], to: [0, 1.75, 5.4], look: [0, 1.6, 0.3], dur: 1.4, fov: 42 },
+    { t: 0, from: [0, 1.75, 3.4], to: [0, 1.75, 2.9], aim: 'michel', aimDy: 1.3, dur: 0.75, fov: 34 },
+    { t: 1.32, from: [0, 1.4, 2.3], to: [0, 1.4, 2.05], aim: 'patate', aimDy: 1.0, dur: 0.8, fov: 42, shake: 0.8 },
+    { t: 2.1, from: [0.4, 1.6, 3.6], to: [0.3, 1.6, 3.2], aim: 'michel', aimDy: 1.0, dur: 1.0, fov: 38, shake: 0.5 },
+    { t: 3.1, from: [0, 1.8, 6.2], to: [0, 1.75, 5.4], look: [0, 1.6, 0.3], dur: 2.0, fov: 42 },
     { t: 5.2, from: [0.4, 1.4, 3.0], to: [0.2, 1.45, 2.6], aim: 'patate', aimDy: 0.1, dur: 5, fov: 40 },
     { t: 10.6, from: [0, 1.9, 6.0], to: [0, 1.7, 5.2], look: [0, 1.1, 0.2], dur: 6 },
     { t: 17.2, from: [0.9, 1.8, 3.9], to: [0.8, 1.8, 3.3], aim: 'michel', aimDy: 0.3, dur: 4, fov: 34 },
@@ -40,5 +45,5 @@ export default {
     { t: 11.5, text: 'MICHEL · MEILLEUR AMI (SOI-DISANT)' },
     { t: 28.4, text: 'CONFESSIONNAL · MICHEL CRAQUE' },
   ],
-  flashes: [10.6, 21.2, 28.1, 38.4, 53.7, 58.5],
+  flashes: [1.32, 2.1, 3.1, 10.6, 21.2, 28.1, 38.4, 53.7, 58.5],
 };

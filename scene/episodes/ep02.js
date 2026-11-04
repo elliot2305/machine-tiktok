@@ -1,7 +1,7 @@
 // Ép 2 – Le jumeau maléfique (afro)
 const P = (x, z, o = {}) => ({ pos: [x, z], ...o });
 export default {
-  bpm: 102, set: 'fridge',
+  bpm: 102, set: 'fridge', introAt: 0, hook: 'LEQUEL EST LE\u00a0VRAI\u00a0?',
   cast: ['patate', 'poireau', 'poireauNoir'],
   events: [
     { t: 0, set: { patate: P(0, 1.2, { mood: 'shock', armsUp: true }), poireau: P(-1.3, 0.0, { rot: 0.35, look: 'patate' }), poireauNoir: P(1.3, 0.0, { rot: -0.35, look: 'patate' }), shake: 1, shakeT: 0, drama: 1 } },
@@ -19,7 +19,10 @@ export default {
     { t: 73.2, set: { patate: P(-0.9, 1.2, { mood: 'shock', armsUp: true }), shake: 1, shakeT: 73.2 } },
   ],
   shots: [
-    { t: 0, from: [0, 1.7, 5.2], to: [0, 1.6, 4.4], aim: 'patate', aimDy: 2.4, dur: 1.4, fov: 42 },
+    { t: 0, from: [0.3, 1.65, 2.0], to: [0.15, 1.6, 1.6], aim: 'poireauNoir', aimDy: 1.0, dur: 0.75, fov: 38 },
+    { t: 0.75, from: [-0.3, 1.65, 2.0], to: [-0.15, 1.6, 1.6], aim: 'poireau', aimDy: 1.0, dur: 0.75, fov: 38 },
+    { t: 1.5, from: [0, 1.4, 2.3], to: [0, 1.4, 2.05], aim: 'patate', aimDy: 1.0, dur: 0.9, fov: 42, shake: 0.8 },
+    { t: 2.4, from: [0, 1.9, 6.0], to: [0, 1.75, 5.2], look: [0, 1.6, 0.2], dur: 2.0, fov: 42 },
     { t: 5.5, from: [0, 1.8, 6.4], to: [0, 1.7, 5.6], look: [0, 1.4, 0.2], dur: 8 },
     { t: 13.9, from: [0.9, 1.2, 3.4], to: [0.6, 1.9, 2.4], aim: 'poireauNoir', aimDy: 0.5, dur: 4, fov: 36 },
     { t: 18.4, from: [-2.0, 1.6, 4.2], to: [-1.4, 1.6, 3.8], look: [0.4, 1.4, 0.2], dur: 4 },
@@ -44,5 +47,5 @@ export default {
     { t: 15, text: 'POIREAU NOIR · LE JUMEAU BELGE' },
     { t: 33.4, text: 'LE POIREAU · L’EX' },
   ],
-  flashes: [13.9, 22.6, 52.3, 65.5, 70.1, 73.2],
+  flashes: [0.75, 1.5, 2.4, 13.9, 22.6, 52.3, 65.5, 70.1, 73.2],
 };
