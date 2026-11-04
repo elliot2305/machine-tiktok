@@ -7,3 +7,6 @@ Rendu des épisodes (vidéo 1080x1920, 30 i/s) :
 3. `tools/mux.sh out/epNN_silent.mp4 epNN.mp3 out/epNN.mp4` : colle le son.
 
 Règles (bible S1) : ragot crié affiché dès 0 s, « Partie N/30 », 60-79 s, « À suivre » figé à la fin.
+
+Coupes audio officielles (outils/decoupe_episodes_S1.py du zip sources) : la vidéo muette est rendue en temps « chanson »,
+puis recadrée sur les segments du MP3 (ex. ép 1 : 1,13 s → fin ; ép 2 : 0-4,4 s + 13,98 s → fin ; ép 3 : 0,57 s → fin).
