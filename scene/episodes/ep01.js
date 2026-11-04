@@ -21,7 +21,7 @@ export default {
     { t: 70.4, set: { patate: P(-0.9, 1.4, { mood: 'shock', armsUp: true }), shake: 1, shakeT: 70.4, spokenBy: 'LA PATATE' } },
   ],
   shots: [
-    { t: 0, from: [0, 1.5, 4.6], to: [0, 1.4, 3.9], aim: 'patate', aimDy: 0.55, dur: 1.4, fov: 40 },
+    { t: 0, from: [0, 1.7, 5.2], to: [0, 1.6, 4.4], aim: 'patate', aimDy: 2.4, dur: 1.4, fov: 42 },
     { t: 4.8, from: [1.8, 1.7, 3.6], to: [1.2, 1.5, 2.4], look: [0, 1.4, -1.6], dur: 4.6, fov: 38 },
     { t: 9.4, from: [0, 1.5, 4.8], to: [0, 1.6, 6.2], look: [0, 1.0, -0.2], dur: 3 },
     { t: 12.0, from: [-1.6, 1.5, 2.6], to: [-1.0, 1.5, 1.8], look: [0, 1.4, -1.6], dur: 4, fov: 38 },

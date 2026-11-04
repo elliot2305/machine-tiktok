@@ -15,7 +15,7 @@ const server = http.createServer((req, res) => {
 });
 (async () => {
   await new Promise(r => server.listen(0, r));
-  const url = `http://127.0.0.1:${server.address().port}/scene/patate.html?ep=${ep}`;
+  const url = `http://127.0.0.1:${server.address().port}/scene/patate.html?ep=${ep}&rs=${opt('rs', '0.75')}&aa=${opt('aa', '0')}`;
   const browser = await chromium.launch({ args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'] });
   const open = async () => { const pg = await browser.newPage({ viewport: { width: 1080, height: 1920 } }); pg.on('pageerror', e => console.error('PAGE', e.message)); pg.on('console', m => { if (m.type() === 'error') console.error('CONSOLE', m.text()); }); await pg.goto(url); await pg.waitForFunction('window.__ready === true', null, { timeout: 120000 }); return pg; };
   const stills = opt('stills');

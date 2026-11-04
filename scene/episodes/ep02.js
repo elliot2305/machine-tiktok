@@ -19,7 +19,7 @@ export default {
     { t: 73.2, set: { patate: P(-0.9, 1.2, { mood: 'shock', armsUp: true }), shake: 1, shakeT: 73.2 } },
   ],
   shots: [
-    { t: 0, from: [0, 1.6, 4.4], to: [0, 1.4, 3.9], aim: 'patate', aimDy: 0.55, dur: 1.4, fov: 42 },
+    { t: 0, from: [0, 1.7, 5.2], to: [0, 1.6, 4.4], aim: 'patate', aimDy: 2.4, dur: 1.4, fov: 42 },
     { t: 5.5, from: [0, 1.8, 6.4], to: [0, 1.7, 5.6], look: [0, 1.4, 0.2], dur: 8 },
     { t: 13.9, from: [0.9, 1.2, 3.4], to: [0.6, 1.9, 2.4], aim: 'poireauNoir', aimDy: 0.5, dur: 4, fov: 36 },
     { t: 18.4, from: [-2.0, 1.6, 4.2], to: [-1.4, 1.6, 3.8], look: [0.4, 1.4, 0.2], dur: 4 },
@@ -33,12 +33,12 @@ export default {
     { t: 56.8, from: [1.8, 1.4, 3.8], to: [1.2, 1.5, 3.4], look: [0, 1.4, 0.4], dur: 4 },
     { t: 61.0, from: [0, 1.4, 3.6], to: [0, 1.5, 3.0], aim: 'patate', dur: 4, fov: 40 },
     { t: 65.5, from: [0, 2.6, 6.5], to: [0, 2.0, 5.2], look: [0, 1.2, 0], dur: 4.6, shake: 0.3 },
-    { t: 70.1, from: [1.4, 2.0, 2.0], to: [1.1, 2.0, 1.5], look: [0.62, 2.1, 0.35], dur: 3, fov: 30 },
+    { t: 70.1, from: [1.0, 1.7, 3.0], to: [0.8, 1.6, 2.6], aim: 'poireau', aimDy: 0, dur: 3, fov: 32 },
     { t: 73.2, from: [-0.9, 1.6, 3.4], to: [-0.9, 1.55, 3.0], aim: 'patate', aimDy: 0.1, dur: 0.5, fov: 40 },
   ],
   stamps: [
     { t: 14.0, text: 'LE JUMEAU !', d: 1.4 },
-    { t: 70.3, text: 'ORANGE ?!', d: 2.0, rot: 6 },
+    { t: 70.3, text: 'ORANGE ?!', d: 2.0, rot: 6, y: 330 },
   ],
   lowers: [
     { t: 15, text: 'POIREAU NOIR · LE JUMEAU BELGE' },

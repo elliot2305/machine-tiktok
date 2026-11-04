@@ -67,9 +67,11 @@ const DUR = data.duration;
 const FREEZE = 2.6; // secondes d'image figée « À suivre » à la fin
 
 // ---------- rendu ----------
-const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+const RS = parseFloat(qs.get('rs') || '0.75'); // échelle du rendu 3D (l'habillage HTML reste net)
+const renderer = new THREE.WebGLRenderer({ antialias: qs.get('aa') === '1', preserveDrawingBuffer: true });
 renderer.setPixelRatio(1);
-renderer.setSize(W, H);
+renderer.setSize(Math.round(W * RS), Math.round(H * RS), false);
+renderer.domElement.style.width = W + 'px'; renderer.domElement.style.height = H + 'px';
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -206,7 +208,7 @@ function makePatate() {
   }
   // larmes
   const tears = [];
-  for (const sx of [-1, 1]) { const t = new THREE.Mesh(new THREE.SphereGeometry(0.045, 16, 12), new THREE.MeshPhysicalMaterial({ color: 0x9fd8ff, roughness: 0, transmission: 0.3, transparent: true, opacity: 0.9 })); t.scale.y = 1.4; t.visible = false; body.add(t); tears.push({ m: t, sx }); }
+  for (const sx of [-1, 1]) { const t = new THREE.Mesh(new THREE.SphereGeometry(0.045, 16, 12), new THREE.MeshPhysicalMaterial({ color: 0x9fd8ff, roughness: 0, transparent: true, opacity: 0.9 })); t.scale.y = 1.4; t.visible = false; body.add(t); tears.push({ m: t, sx }); }
   root.userData = { ...root.userData, body, eyes: ey, mouth: mo, arms, legs, tears, baseY: 1.08, height: 1.9 };
   return shadowAll(root);
 }
@@ -242,7 +244,7 @@ function makePoireau({ noir = false } = {}) {
     bow.position.set(0, -0.08, 0.28); body.add(bow);
   }
   // marque de rouge à lèvres (invisible par défaut)
-  const kiss = new THREE.Mesh(new THREE.TorusGeometry(0.05, 0.022, 8, 24), mat(0xff7a00, { r: .3 })); kiss.scale.set(1.2, 0.6, 1); kiss.position.set(0.2, 0.25, 0.19); kiss.rotation.y = 0.8; kiss.visible = false; body.add(kiss);
+  const kiss = new THREE.Group(); for (const sy of [1, -1]) { const lip = new THREE.Mesh(new THREE.SphereGeometry(0.06, 16, 12), mat(0xff6a00, { r: .3 })); lip.scale.set(1.5, 0.55, 0.35); lip.position.y = sy * 0.03; kiss.add(lip); } kiss.position.set(0.17, 0.25, 0.22); kiss.rotation.y = 0.65; kiss.visible = false; body.add(kiss);
   const arms = [];
   for (const sx of [-1, 1]) { const a = new THREE.Group(); const arm = new THREE.Mesh(new THREE.CapsuleGeometry(0.04, 0.34, 6, 10), mat(whiteC)); arm.position.y = -0.2; a.add(arm); const h = new THREE.Mesh(new THREE.SphereGeometry(0.07, 12, 10), mat(0xffffff)); h.position.y = -0.42; a.add(h); a.position.set(sx * 0.28, 0.0, 0); a.rotation.z = sx * 0.35; body.add(a); arms.push(a); }
   root.userData = { ...root.userData, body, eyes: ey, mouth: mo, arms, kiss, baseY: 0.95, height: 2.8 };
@@ -318,7 +320,7 @@ function makeFridge() {
   // rainures du fond
   for (let i = -5; i <= 5; i++) { const gr = new THREE.Mesh(new THREE.BoxGeometry(0.04, 14, 0.02), new THREE.MeshStandardMaterial({ color: 0xcfdde6 })); gr.position.set(i * 0.7, 4, -3.18); g.add(gr); }
   // étagère en verre au-dessus
-  const glass = new THREE.Mesh(new THREE.BoxGeometry(8.4, 0.06, 6), new THREE.MeshPhysicalMaterial({ color: 0xbfe8ff, roughness: 0.05, transmission: 0.6, transparent: true, opacity: 0.45 })); glass.position.set(0, 3.6, 0); g.add(glass);
+  const glass = new THREE.Mesh(new THREE.BoxGeometry(8.4, 0.06, 6), new THREE.MeshPhysicalMaterial({ color: 0xbfe8ff, roughness: 0.05, transparent: true, opacity: 0.45 })); glass.position.set(0, 3.6, 0); g.add(glass);
   const rim = new THREE.Mesh(new THREE.BoxGeometry(8.4, 0.12, 0.08), mat(0xffffff)); rim.position.set(0, 3.6, 3.0); g.add(rim);
   // objets sur l'étagère : yaourts, bouteille de lait, pot de confiture
   const r = rng(3);
@@ -328,7 +330,7 @@ function makeFridge() {
   const mcap = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.16, 0.2, 24), mat(0x1e66d0)); mcap.position.set(2.6, 5.35, -2); g.add(mcap);
   const lbl = new THREE.Mesh(new THREE.CylinderGeometry(0.305, 0.305, 0.5, 32, 1, true), mat(0x1e66d0)); lbl.position.set(2.6, 4.3, -2); g.add(lbl);
   // bac à légumes (zone VIP) en arrière plan
-  const bac = new THREE.Mesh(new RoundedBoxGeometry(5.0, 1.0, 1.6, 4, 0.1), new THREE.MeshPhysicalMaterial({ color: 0xd6f2ff, roughness: 0.1, transmission: 0.5, transparent: true, opacity: 0.35 }));
+  const bac = new THREE.Mesh(new RoundedBoxGeometry(5.0, 1.0, 1.6, 4, 0.1), new THREE.MeshPhysicalMaterial({ color: 0xd6f2ff, roughness: 0.1, transparent: true, opacity: 0.35 }));
   bac.position.set(0, 0.5, -2.2); g.add(bac);
   // tomates et salade dans le bac
   for (let i = 0; i < 6; i++) { const t = new THREE.Mesh(new THREE.SphereGeometry(0.22, 24, 16), mat(i % 2 ? 0xd8262f : 0x5fb33a, { r: .4 })); t.position.set(-2 + i * 0.8, 0.25, -2.5 + (i % 2) * 0.3); g.add(t); }
@@ -357,7 +359,7 @@ function makeConfessionnal() {
 // ---------- lumières ----------
 const hemi = new THREE.HemisphereLight(0xffffff, 0x8aa0b0, 0.9); scene.add(hemi);
 const key = new THREE.DirectionalLight(0xfff2dd, 2.4); key.position.set(2.5, 6, 5); key.castShadow = true;
-key.shadow.mapSize.set(2048, 2048); key.shadow.camera.left = -5; key.shadow.camera.right = 5; key.shadow.camera.top = 6; key.shadow.camera.bottom = -2; key.shadow.bias = -0.0005; key.shadow.radius = 4;
+key.shadow.mapSize.set(1024, 1024); key.shadow.camera.left = -5; key.shadow.camera.right = 5; key.shadow.camera.top = 6; key.shadow.camera.bottom = -2; key.shadow.bias = -0.0005; key.shadow.radius = 4;
 scene.add(key);
 const rim = new THREE.DirectionalLight(0x9fd0ff, 1.2); rim.position.set(-4, 4, -3); scene.add(rim);
 const fridgeLight = new THREE.PointLight(0xfff6e0, 6, 12, 1.6); fridgeLight.position.set(0, 3.4, 1.5); scene.add(fridgeLight);
@@ -403,7 +405,12 @@ function stateAt(t) {
 const tmpV = new THREE.Vector3();
 function aimAt(name, dy = 0) {
   const c = chars[name]; if (!c) return new THREE.Vector3(0, 1.2, 0);
-  return new THREE.Vector3(c.position.x, c.position.y + c.userData.height * 0.55 + dy, c.position.z);
+  // vise le visage, un peu en dessous pour que le visage tombe au-dessus des sous-titres
+  c.updateMatrixWorld(true);
+  const f = new THREE.Vector3(); c.userData.eyes.group.getWorldPosition(f);
+  const e = c.userData.eyes.pupils[0].parent.position;
+  const face = c.userData.eyes.group.localToWorld(new THREE.Vector3(0, e.y, e.z));
+  return new THREE.Vector3(c.position.x, face.y - 0.3 + dy * 0.3, c.position.z);
 }
 
 function frame(t) {
@@ -508,7 +515,7 @@ function overlay(t, tt, st) {
   // tampon dramatique
   const sp = $('#stamp');
   const stamp = script.stamps.find(s => tt >= s.t && tt < s.t + (s.d ?? 1.4));
-  if (stamp) { sp.style.display = 'block'; const a = clamp((tt - stamp.t) / 0.15); sp.querySelector('span').textContent = stamp.text; sp.style.transform = `scale(${lerp(2.2, 1, ease(a))}) rotate(${stamp.rot ?? -6}deg)`; sp.style.opacity = tt > stamp.t + (stamp.d ?? 1.4) - 0.2 ? 0.3 : 1; } else sp.style.display = 'none';
+  if (stamp) { sp.style.display = 'block'; const a = clamp((tt - stamp.t) / 0.15); sp.querySelector('span').textContent = stamp.text; sp.style.top = (stamp.y ?? 760) + 'px'; sp.style.transform = `scale(${lerp(2.2, 1, ease(a))}) rotate(${stamp.rot ?? -6}deg)`; sp.style.opacity = tt > stamp.t + (stamp.d ?? 1.4) - 0.2 ? 0.3 : 1; } else sp.style.display = 'none';
   // bandeau bas (nom du perso, façon télé-réalité)
   const lw = $('#lower'); const lt = script.lowers.find(s => tt >= s.t && tt < s.t + (s.d ?? 2.5));
   if (lt) { lw.style.display = 'block'; lw.textContent = lt.text; lw.style.transform = `translateX(${lerp(-700, 0, ease(clamp((tt - lt.t) / 0.3)))}px)`; } else lw.style.display = 'none';
