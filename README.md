@@ -10,3 +10,9 @@ Règles (bible S1) : ragot crié affiché dès 0 s, « Partie N/30 », 60-79 s, 
 
 Coupes audio officielles (outils/decoupe_episodes_S1.py du zip sources) : la vidéo muette est rendue en temps « chanson »,
 puis recadrée sur les segments du MP3 (ex. ép 1 : 1,13 s → fin ; ép 2 : 0-4,4 s + 13,98 s → fin ; ép 3 : 0,57 s → fin).
+
+## Actu en chanson (GitHub Actions)
+
+1. **actu-prepare** (clé API) : modifier `.github/actu-trigger` → sujet du jour, faits vérifiés (2 sources), paroles, prompt Suno → `data/actu/<slug>/brief.json`.
+2. **Suno** (seule étape hors Actions, connecteur Suno dans Claude) : générer avec `lyrics` + `suno_style`, télécharger, minutage → déposer `song.mp3` + `alignment.json` dans le dossier (+ `img1..3` facultatives).
+3. **render-actu** : se lance tout seul à l'arrivée du `song.mp3` → MP4 en artefact `actu-mp4`.
