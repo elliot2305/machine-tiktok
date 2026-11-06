@@ -1,0 +1,4 @@
+{"title":"GRÈVE DU 5 NOVEMBRE","part":"ACTU 1/3","duration":12,"sources":["Le Monde","franceinfo"],
+"images":["data/actu/test/el_foule.png","data/actu/test/el_face.png","data/actu/test/el_dos.png"],
+"cards":[{"t0":0.5,"t1":3,"big":"320 000","sub":"selon le ministère"},{"t0":3,"t1":6,"type":"split","items":[{"big":"500 000","sub":"organisateurs","color":"#ff3b30"},{"big":"320 000","sub":"ministère"}]},{"t0":6,"t1":9,"big":"QUI DIT VRAI ?","color":"#ffd60a","size":170,"top":1000},{"t0":9,"t1":99,"type":"camps","big":"ET TOI ?"}],
+"lines":[{"t0":0.3,"t1":3,"words":[{"w":"Trois","t0":0.3},{"w":"cent","t0":0.6},{"w":"mille","t0":1}]}]}
