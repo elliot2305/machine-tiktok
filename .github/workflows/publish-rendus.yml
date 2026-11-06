@@ -1,12 +1,9 @@
 name: publish-rendus
 # Copie les artefacts (MP4 + aperçus) d'un run de rendu sur la branche « rendus », lisible depuis Claude (le stockage des artefacts ne l'est pas).
+# Déclenché en écrivant les IDs de runs dans .github/publish-trigger (workflow_dispatch ne marche que sur la branche par défaut).
 on:
-  workflow_dispatch:
-    inputs:
-      run_ids: { description: 'IDs des runs, séparés par des espaces', required: true }
-  workflow_run:
-    workflows: [render-actu]
-    types: [completed]
+  push:
+    paths: ['.github/publish-trigger']
 permissions:
   contents: write
   actions: read
@@ -14,17 +11,19 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
+        with: { sparse-checkout: .github }
       - name: Télécharger les artefacts
         env: { GH_TOKEN: '${{ github.token }}' }
         run: |
-          IDS="${{ github.event.inputs.run_ids }}"; [ -z "$IDS" ] && IDS="${{ github.event.workflow_run.id }}"
+          IDS=$(cat .github/publish-trigger)
           mkdir -p r && cd r
           for id in $IDS; do gh run download $id -R ${{ github.repository }} -D run_$id || true; done
           find . -type f | head -50
       - name: Pousser sur la branche rendus
         run: |
-          cd r && git init -q && git checkout -q -b rendus
+          cd r && rm -rf .git && git init -q && git checkout -q -b rendus
           git config user.name "machine-tiktok-bot"; git config user.email "actions@users.noreply.github.com"
           git remote add origin https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git
           git fetch -q origin rendus && git reset -q --soft origin/rendus || true
-          git add -A && git commit -qm "rendus $(date -u +%F_%H%M)" && git push -q origin rendus
+          git add --ignore-removal . && git commit -qm "rendus $(date -u +%F_%H%M)" && git push -q origin rendus
