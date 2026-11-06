@@ -73,7 +73,7 @@
   "CBC News",
   "Radio-Canada"
  ],
- "lyrics": "[Shout]\nUn trombone rouge... contre une maison !\n\n[Verse]\nJuillet deux mille cinq, Kyle n'a pas de boulot\nSur son bureau un trombone, il le poste sur le net, hello\nUn stylo poisson, une poignée de porte, c'est parti\nUne génératrice, une motoneige, le monde entier suit ça\n\n[Chorus]\nTroc, troc, troc, un trombone rouge !\nQuatorze échanges, et là tout bouge\nTroc, troc, troc, c'est pas possible !\nUn trombone, une maison, franchement c'est dingue !\n\n[Verse]\nUn après-midi avec Alice Cooper, il l'échange en deux secondes\nContre une boule à neige KISS, mais quel délire dans le monde\nUn acteur adore ça, Corbin Bernsen, il offre un rôle de ciné\nLa ville de Kipling dit : « Ce rôle, on te file les clés ! »\n\n[Chorus]\nTroc, troc, troc, un trombone rouge !\nQuatorze échanges, et là tout bouge\nTroc, troc, troc, c'est pas possible !\nUn trombone, une maison, franchement c'est dingue !",
+ "lyrics": "[Shout]\nUn trombone rouge... contre une maison !\n\n[Verse]\nJuillet deux mille cinq, Kyle n'a pas de boulot\nSur son bureau un trombone, il le poste sur le net, hello\nUn stylo poisson, une poignée de porte, c'est parti\nUne génératrice, une motoneige, le monde entier suit ça\n\n[Chorus]\nTroc, troc, troc, un trombone rouge !\nQuatorze échanges, et là tout bouge\nTroc, troc, troc, c'est pas possible !\nUn trombone, une maison, franchement c'est dingue !\n\n[Verse]\nUn après-midi avec Alice Cooper, hop, il l'échange encore\nContre une boule à neige KISS, franchement, qui fait ça encore ?\nUn acteur adore ça, Corbin Bernsen, il offre un rôle de ciné\nLa ville de Kipling dit : « Ce rôle, on te file les clés ! »\n\n[Chorus]\nTroc, troc, troc, un trombone rouge !\nQuatorze échanges, et là tout bouge\nTroc, troc, troc, c'est pas possible !\nUn trombone, une maison, franchement c'est dingue !",
  "suno_style": "French urban pop afropop, bouncy percussion, catchy melodic rap-sung vocals, shouted hook, playful and upbeat, 100 bpm, big singalong chorus",
  "cards": [
   {
@@ -82,12 +82,12 @@
    "size": 130
   },
   {
-   "at": 0.3,
+   "at": 0.14,
    "big": "12 JUILLET 2005",
    "sub": "un trombone rouge sur un bureau, zéro boulot"
   },
   {
-   "at": 0.6,
+   "at": 0.74,
    "big": "UN RÔLE DE FILM = UNE MAISON",
    "color": "#ffd60a"
   },
