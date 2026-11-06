@@ -42,16 +42,16 @@ const q=new URLSearchParams(location.search);let C,IM=[],LINES=[],SHOTS=[];
 // Fumée/fumigènes : particules qui montent depuis le bas, couleurs rouge/bleu du format.
 const SMOKE=[...Array(14)].map((_,i)=>[(i*173+90)%1080,1350+(i*97)%500,i%3==2?'60,110,255':'255,45,30']);
 const drops=[...Array(160)].map((_,i)=>[(i*97)%1080,(i*389)%1920,.6+((i*7)%10)/10]);
-function photo(t,k,zoom,cx,cy){const im=IM[k];g.save();g.fillStyle='#000';g.fillRect(0,0,W,H);
+function photo(t,k,zoom,cx,cy){const FX=C.fx!==false;const im=IM[k];g.save();g.fillStyle='#000';g.fillRect(0,0,W,H);
  const base=Math.max(W/im.width,H/im.height),sc=base*zoom,hh=H/2/sc,hw=W/2/sc;
  cy=Math.min(im.height-hh,Math.max(hh,cy*im.height));cx=Math.min(im.width-hw,Math.max(hw,cx*im.width));
  g.translate(W/2,H/2);g.scale(sc,sc);g.translate(-cx,-cy);g.drawImage(im,0,0);g.restore();
  g.save();g.globalCompositeOperation='screen';
- SMOKE.forEach(([x,y,c],i)=>{for(let j=0;j<6;j++){const life=((t*.18+j/6+i*.13)%1);const px=x+Math.sin(t*.6+j+i)*30+life*(i%2?-60:60),py=y-life*420,r=60+life*170;
+ if(FX)SMOKE.forEach(([x,y,c],i)=>{for(let j=0;j<6;j++){const life=((t*.18+j/6+i*.13)%1);const px=x+Math.sin(t*.6+j+i)*30+life*(i%2?-60:60),py=y-life*420,r=60+life*170;
   const gr=g.createRadialGradient(px,py,0,px,py,r);gr.addColorStop(0,`rgba(${c},${.16*(1-life)})`);gr.addColorStop(1,`rgba(${c},0)`);g.fillStyle=gr;g.fillRect(px-r,py-r,2*r,2*r)}
   if(i%4==0){const f=.5+.5*Math.abs(Math.sin(t*15+i*2.3))*Math.abs(Math.sin(t*5.1+i));const gr=g.createRadialGradient(x,y,0,x,y,70);gr.addColorStop(0,`rgba(${c},${.55*f})`);gr.addColorStop(1,`rgba(${c},0)`);g.fillStyle=gr;g.fillRect(x-70,y-70,140,140)}});
  g.restore();g.save();g.strokeStyle='rgba(200,215,255,.2)';g.lineWidth=2;
- for(const [x,y,v] of drops){const yy=(y+t*1400*v)%H;g.beginPath();g.moveTo(x,yy);g.lineTo(x-6,yy+38*v);g.stroke()}
+ if(FX)for(const [x,y,v] of drops){const yy=(y+t*1400*v)%H;g.beginPath();g.moveTo(x,yy);g.lineTo(x-6,yy+38*v);g.stroke()}
  const v=g.createRadialGradient(W/2,H/2,H*.3,W/2,H/2,H*.75);v.addColorStop(0,'rgba(0,0,0,0)');v.addColorStop(1,'rgba(0,0,0,.62)');g.fillStyle=v;g.fillRect(0,0,W,H);g.restore()}
 function cardHTML(c){
  if(c.type==='split')return `<div class="split">${c.items.map(it=>`<div><div class="pill" style="padding:12px 18px 0"><div class="big" style="font-size:118px;color:${it.color||'#fff'}">${it.big}</div></div><br><div class="sub" style="font-size:36px">${it.sub}</div></div>`).join('')}</div>`;
@@ -65,7 +65,7 @@ window.__seek=t=>{
  $('flashw').style.opacity=C.cards.some(c=>t>=c.t0&&t<c.t0+.07)?.4:0;
  const L=LINES.find(l=>t>=l.t0-.15&&t<l.t1+.6);let h='';if(L)L.words.forEach(w=>{h+=`<span class="w${t>=w.t0?' on':''}">${w.w}</span> `});$('lyr').innerHTML=h};
 (async()=>{C=await (await fetch('/'+q.get('clip'))).json();window.__duration=C.duration;
- $('title').textContent=C.title;$('src').textContent='Sources : '+C.sources.join(' · ');$('part').textContent=C.part||'';
+ $('title').textContent=C.title;$('flash').textContent=C.kicker||'FLASH INFO';if(C.kicker&&C.kicker!=='FLASH INFO')$('flash').style.background='#7b2cff';$('ia').textContent=C.ia===false?'Photos : Wikimedia Commons':'Illustration IA';$('src').textContent='Sources : '+C.sources.join(' · ');$('part').textContent=C.part||'';
  $('cards').innerHTML=C.cards.map((c,i)=>`<div class="card" id="k${i}" style="${c.top?`top:${c.top}px`:''}">${cardHTML(c)}</div>`).join('');
  IM=await Promise.all(C.images.map(src=>new Promise(r=>{const i=new Image();i.onload=()=>r(i);i.src='/'+src})));
  // Plans : on alterne les 3 images, ~5 s par plan, zoom/pan différents à chaque passage.

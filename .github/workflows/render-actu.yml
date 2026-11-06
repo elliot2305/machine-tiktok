@@ -5,7 +5,7 @@ on:
     inputs:
       dir: { description: 'Dossier du clip (data/actu/<slug>)', required: true }
   push:
-    paths: ['data/actu/**/song.mp3']
+    paths: ['data/actu/**/song.mp3', 'data/histoire/**/song.mp3', 'data/actu/**/song-url.txt', 'data/histoire/**/song-url.txt']
 jobs:
   render:
     runs-on: ubuntu-latest
@@ -21,13 +21,18 @@ jobs:
         run: |
           mkdir -p out
           DIRS="${{ github.event.inputs.dir }}"
-          [ -z "$DIRS" ] && DIRS=$(git diff --name-only HEAD~1 HEAD -- 'data/actu/**/song.mp3' | xargs -r -n1 dirname)
+          [ -z "$DIRS" ] && DIRS=$(git diff --name-only HEAD~1 HEAD -- 'data/*/**/song.mp3' 'data/*/**/song-url.txt' | xargs -r -n1 dirname | sort -u)
           for d in $DIRS; do
             s=$(basename $d)
+            [ -f $d/song.mp3 ] || curl -sSLf -o $d/song.mp3 "$(head -1 $d/song-url.txt)"
+            [ -f $d/song.mp3 ] || { echo "pas de MP3 pour $d"; exit 1; }
             dur=$(ffprobe -v error -show_entries format=duration -of csv=p=0 $d/song.mp3)
             python3 tools/actu_build.py $d $dur
             node tools/render.js $d/clip.json - out/${s}_silent.mp4 --scene actu --workers 4
-            tools/mux.sh out/${s}_silent.mp4 $d/song.mp3 out/Actu_${s}.mp4
+            node tools/render.js $d/clip.json - out/stills --scene actu --stills 0.5,3,15,30,50,$(python3 -c "print(round(float(open('$d/cut.txt').read())-2,1))")
+            tools/mux.sh out/${s}_silent.mp4 $d/song.mp3 out/Clip_${s}.mp4
           done
       - uses: actions/upload-artifact@v4
-        with: { name: actu-mp4, path: out/Actu_*.mp4, retention-days: 30 }
+        with: { name: actu-mp4, path: out/Clip_*.mp4, retention-days: 30 }
+      - uses: actions/upload-artifact@v4
+        with: { name: apercus, path: out/stills, retention-days: 30 }
