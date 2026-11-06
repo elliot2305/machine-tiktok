@@ -1,0 +1,71 @@
+{
+ "slug": "2026-11-06-greve",
+ "title": "COMBIEN ILS ÉTAIENT ?",
+ "part": "ACTU",
+ "summary": "Après la journée de grève et de manifestations du 5 novembre pour les salaires, la CGT annonce près de 1,6 million de manifestants. Le ministère de l'Intérieur en compte 575 000. Lecornu convoque une conférence sociale lundi à Matignon, et la barre des 1 500 € net pour le Smic est sur la table.",
+ "facts": [
+  {
+   "fact": "Le 5 novembre, la CGT a revendiqué près de 1,6 million de manifestants en France, contre environ 575 000 selon le ministère de l'Intérieur.",
+   "sources": [
+    "https://www.franceinfo.fr/economie/greve/greve/pres-de-1-6-million-de-personnes-ont-defile-en-france-lors-de-la-mobilisation-du-5-novembre-selon-la-cgt-575-000-selon-le-ministere-de-l-interieur_8269868.html",
+    "https://france24.com/fr/france/20261105-en-direct-grogne-sociale-monte-cran-greve-manifestations-interprofessionnelle-france-syndicat-police-lycee-fonctionnaires-retraites"
+   ]
+  },
+  {
+   "fact": "Sébastien Lecornu réunit une conférence sociale avec syndicats et patronat lundi 9 novembre à Matignon, sur les salaires et le pouvoir d'achat.",
+   "sources": [
+    "https://www.publicsenat.fr/actualites/politique/manifestation-du-5-novembre-sebastien-lecornu-annonce-une-conference-sociale-avec-les-syndicats-et-le-patronat-lundi",
+    "https://www.france24.com/fr/france/20261105-apr%C3%A8s-une-journ%C3%A9e-de-forte-mobilisation-en-france-lecornu-convoque-les-syndicats-et-le-patronat"
+   ]
+  },
+  {
+   "fact": "La CFDT demande un coup de pouce de 100 euros net sur le Smic.",
+   "sources": [
+    "https://www.publicsenat.fr/actualites/politique/manifestation-du-5-novembre-sebastien-lecornu-annonce-une-conference-sociale-avec-les-syndicats-et-le-patronat-lundi",
+    "https://www.france24.com/fr/france/20261105-apr%C3%A8s-une-journ%C3%A9e-de-forte-mobilisation-en-france-lecornu-convoque-les-syndicats-et-le-patronat"
+   ]
+  },
+  {
+   "fact": "Le ministre du Travail Jean-Pierre Farandou juge « important » d'essayer de franchir la barre des 1 500 euros net pour le Smic.",
+   "sources": [
+    "https://franceinfo.fr/societe/manifestations/direct-mobilisation-sociale-le-ministre-du-travail-juge-important-d-essayer-de-relever-le-smic-au-dela-de-la-barre-des-1-500-euros-net_8270366.html",
+    "https://www.moneyvox.fr/votre-argent/actualites/111138/hausse-du-smic-a-plus-de-1-500-euros-net-le-ministre-du-travail-juge-important-essayer-de-franchir-la-barre"
+   ]
+  }
+ ],
+ "sources": [
+  "franceinfo",
+  "France 24",
+  "Public Sénat",
+  "Moneyvox"
+ ],
+ "lyrics": "[Shout]\nCombien ils étaient ? Personne est d'accord !\n\n[Verse]\nJeudi dans la rue, ça chantait fort\nLa CGT dit un million six, ouh la la\nLe ministère dit cinq cent soixante-quinze\nMême la calculette elle sait plus où elle va\n\n[Chorus]\nCombien ils étaient ? (Hey !)\nUn million six ou cinq cent soixante-quinze ? (Hey !)\nOn compte, on recompte, ça change jamais\nMais le message, lui, il est bien passé\n\n[Verse]\nLecornu a dit : « Lundi, venez à Matignon »\nSyndicats, patronat, tout le monde à la maison\nConférence sociale, les salaires sur la table\nOn espère que le café, lui, sera pas périssable\n\n[Chorus]\nCombien ils étaient ? (Hey !)\nUn million six ou cinq cent soixante-quinze ? (Hey !)\nOn compte, on recompte, ça change jamais\nMais le message, lui, il est bien passé\n\n[Verse]\nLa CFDT veut cent balles net en plus\nLe ministre du Travail rêve du quinze cents net\nLa barre est haute, on joue au limbo à l'envers\nEt nous au bout du mois, on fait quoi, on prie ?\n\n[Chorus]\nCombien ils étaient ? (Hey !)\nQuinze cents net, c'est pour quand ? (Hey !)\nLundi on saura, ou peut-être pas\nEn attendant, passe-moi le Smic, oh la la !",
+ "suno_style": "French melodic rap afropop, urban pop, bouncy dancehall percussion, catchy chant hook, male vocals, playful, 100 bpm",
+ "cards": [
+  {
+   "at": 0.05,
+   "big": "575 000 vs 1,6 M",
+   "sub": "selon l'Intérieur / selon la CGT"
+  },
+  {
+   "at": 0.35,
+   "big": "LUNDI 9 NOV",
+   "sub": "conférence sociale à Matignon, selon Matignon"
+  },
+  {
+   "at": 0.65,
+   "big": "SMIC À 1 500 € NET ?",
+   "color": "#ffd60a"
+  },
+  {
+   "at": 0.9,
+   "type": "camps",
+   "big": "ET TOI ?"
+  }
+ ],
+ "image_queries": [
+  "manifestation foule Paris drapeaux syndicats (Wikimedia Commons)",
+  "Hôtel de Matignon façade Paris (Wikimedia Commons)",
+  "billets et pièces d'euros porte-monnaie (Pixabay / Unsplash)"
+ ]
+}
