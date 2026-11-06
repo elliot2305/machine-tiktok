@@ -1,0 +1,30 @@
+name: publish-rendus
+# Copie les artefacts (MP4 + aperçus) d'un run de rendu sur la branche « rendus », lisible depuis Claude (le stockage des artefacts ne l'est pas).
+on:
+  workflow_dispatch:
+    inputs:
+      run_ids: { description: 'IDs des runs, séparés par des espaces', required: true }
+  workflow_run:
+    workflows: [render-actu]
+    types: [completed]
+permissions:
+  contents: write
+  actions: read
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Télécharger les artefacts
+        env: { GH_TOKEN: '${{ github.token }}' }
+        run: |
+          IDS="${{ github.event.inputs.run_ids }}"; [ -z "$IDS" ] && IDS="${{ github.event.workflow_run.id }}"
+          mkdir -p r && cd r
+          for id in $IDS; do gh run download $id -R ${{ github.repository }} -D run_$id || true; done
+          find . -type f | head -50
+      - name: Pousser sur la branche rendus
+        run: |
+          cd r && git init -q && git checkout -q -b rendus
+          git config user.name "machine-tiktok-bot"; git config user.email "actions@users.noreply.github.com"
+          git remote add origin https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git
+          git fetch -q origin rendus && git reset -q --soft origin/rendus || true
+          git add -A && git commit -qm "rendus $(date -u +%F_%H%M)" && git push -q origin rendus
