@@ -43,7 +43,7 @@
  "suno_style": "French melodic rap afropop, urban pop, bouncy dancehall percussion, catchy chant hook, male vocals, playful, 100 bpm",
  "cards": [
   {
-   "at": 0.05,
+   "at": 0,
    "big": "575 000 vs 1,6 M",
    "sub": "selon l'Intérieur / selon la CGT"
   },
@@ -67,5 +67,10 @@
   "manifestation foule Paris drapeaux syndicats (Wikimedia Commons)",
   "Hôtel de Matignon façade Paris (Wikimedia Commons)",
   "billets et pièces d'euros porte-monnaie (Pixabay / Unsplash)"
+ ],
+ "commons_queries": [
+  "Paris demonstration trade union CGT",
+  "Hôtel Matignon Paris",
+  "euro banknotes coins"
  ]
 }
