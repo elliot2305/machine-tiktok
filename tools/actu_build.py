@@ -33,7 +33,10 @@ for i, c in enumerate(cs):
     cards.append({'t0': round(t0, 2), 't1': round(t1, 2), **c})
 imgs = sorted(glob.glob(f'{d}/img*.*')) or sorted(glob.glob('data/actu/test/el_*.png'))
 kick = b.get('kicker', 'FLASH INFO')
-clip = {'title': b['title'], 'kicker': kick, 'fx': kick == 'FLASH INFO', 'ia': not glob.glob(f'{d}/img*.*'), 'part': b.get('part', 'ACTU'), 'duration': dur, 'sources': b.get('sources', []),
+cr = json.load(open(f'{d}/credits.json')) if os.path.exists(f'{d}/credits.json') and glob.glob(f'{d}/img*.*') else []
+au = sorted({re.sub(r'\s+', ' ', c.get('author', ''))[:40] for c in cr if c.get('author')})
+credit = ('Photos : ' + ', '.join(au) + ' / Wikimedia Commons (' + ', '.join(sorted({c['license'] for c in cr})) + ')') if cr else 'Illustration IA'
+clip = {'credit': credit, 'title': b['title'], 'kicker': kick, 'fx': kick == 'FLASH INFO', 'ia': not glob.glob(f'{d}/img*.*'), 'part': b.get('part', 'ACTU'), 'duration': dur, 'sources': b.get('sources', []),
         'images': imgs, 'cards': cards, 'lines': L}
 json.dump(clip, open(f'{d}/clip.json', 'w'), ensure_ascii=False)
 open(f'{d}/cut.txt', 'w').write(str(dur)); open(f'{d}/skip.txt', 'w').write(str(skip))

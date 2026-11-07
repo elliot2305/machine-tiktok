@@ -5,7 +5,9 @@ on:
     inputs:
       dir: { description: 'Dossier du clip (data/actu/<slug>)', required: true }
   push:
-    paths: ['data/actu/**/song.mp3', 'data/histoire/**/song.mp3', 'data/actu/**/song-url.txt', 'data/histoire/**/song-url.txt']
+    paths: ['data/actu/**/song.mp3', 'data/histoire/**/song.mp3', 'data/actu/**/song-url.txt', 'data/histoire/**/song-url.txt', 'data/*/**/rerender.txt']
+permissions:
+  contents: write
 jobs:
   render:
     runs-on: ubuntu-latest
@@ -21,7 +23,7 @@ jobs:
         run: |
           mkdir -p out
           DIRS="${{ github.event.inputs.dir }}"
-          [ -z "$DIRS" ] && DIRS=$(git diff --name-only HEAD~1 HEAD -- 'data/*/**/song.mp3' 'data/*/**/song-url.txt' | xargs -r -n1 dirname | sort -u)
+          [ -z "$DIRS" ] && DIRS=$(git diff --name-only HEAD~1 HEAD -- 'data/*/**/song.mp3' 'data/*/**/song-url.txt' 'data/*/**/rerender.txt' | xargs -r -n1 dirname | sort -u)
           for d in $DIRS; do
             s=$(basename $d)
             [ -f $d/song.mp3 ] || curl -sSLf -o $d/song.mp3 "$(head -1 $d/song-url.txt)"
@@ -30,7 +32,7 @@ jobs:
             python3 tools/fetch_photos.py $d || true
             python3 tools/actu_build.py $d $dur
             node tools/render.js $d/clip.json - out/${s}_silent.mp4 --scene actu --workers 4
-            node tools/render.js $d/clip.json - out/stills --scene actu --stills 0.5,3,15,30,50,$(python3 -c "print(round(float(open('$d/cut.txt').read())-2,1))")
+            mkdir -p out/stills/$s && node tools/render.js $d/clip.json - out/stills/$s --scene actu --stills 0.5,3,15,30,50,$(python3 -c "print(round(float(open('$d/cut.txt').read())-2,1))")
             ffmpeg -loglevel error -y -ss $(cat $d/skip.txt) -i $d/song.mp3 -c:a libmp3lame -q:a 2 /tmp/song_${s}.mp3
             tools/mux.sh out/${s}_silent.mp4 /tmp/song_${s}.mp3 out/Clip_${s}.mp4
           done
@@ -38,3 +40,11 @@ jobs:
         with: { name: actu-mp4, path: out/Clip_*.mp4, retention-days: 30 }
       - uses: actions/upload-artifact@v4
         with: { name: apercus, path: out/stills, retention-days: 30 }
+      - name: Copie sur la branche rendus (lisible depuis Claude)
+        run: |
+          mkdir -p /tmp/r && cd /tmp/r && git init -q && git checkout -q -b rendus
+          git config user.name "machine-tiktok-bot"; git config user.email "actions@users.noreply.github.com"
+          git remote add origin https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git
+          git fetch -q origin rendus && git reset -q --soft origin/rendus || true
+          mkdir -p run_${{ github.run_id }} && cp -r $GITHUB_WORKSPACE/out/Clip_*.mp4 $GITHUB_WORKSPACE/out/stills run_${{ github.run_id }}/
+          git add --ignore-removal . && git commit -qm "rendu run ${{ github.run_id }}" && git push -q origin rendus

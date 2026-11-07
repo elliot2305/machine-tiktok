@@ -20,7 +20,7 @@ canvas{position:absolute;left:0;top:0}
 #lyr{position:absolute;left:40px;right:40px;bottom:290px;font-size:66px;line-height:1.08;letter-spacing:2px;text-transform:uppercase;text-shadow:0 4px 16px #000}
 .w{color:rgba(255,255,255,.42)}.w.on{color:#fff}
 #src{position:absolute;left:0;right:0;bottom:170px;font-family:Arial,Helvetica,sans-serif;font-weight:700;font-size:34px;opacity:.85}
-#ia{position:absolute;right:30px;top:40px;font-family:Arial,Helvetica,sans-serif;font-weight:700;font-size:26px;opacity:.7;background:rgba(0,0,0,.5);padding:4px 12px}
+#ia{position:absolute;right:30px;top:40px;max-width:760px;text-align:right;font-family:Arial,Helvetica,sans-serif;font-weight:700;font-size:26px;opacity:.7;background:rgba(0,0,0,.5);padding:4px 12px}
 #part{position:absolute;left:30px;top:40px;font-family:Arial,Helvetica,sans-serif;font-weight:800;font-size:28px;background:#e10600;padding:4px 12px}
 #flashw{position:absolute;inset:0;background:#fff;opacity:0}
 </style></head><body>
@@ -53,7 +53,7 @@ function photo(t,k,zoom,cx,cy){const FX=C.fx!==false;const im=IM[k];g.save();g.f
  g.restore();g.save();g.strokeStyle='rgba(200,215,255,.2)';g.lineWidth=2;
  if(FX)for(const [x,y,v] of drops){const yy=(y+t*1400*v)%H;g.beginPath();g.moveTo(x,yy);g.lineTo(x-6,yy+38*v);g.stroke()}
  const v=g.createRadialGradient(W/2,H/2,H*.3,W/2,H/2,H*.75);v.addColorStop(0,'rgba(0,0,0,0)');v.addColorStop(1,'rgba(0,0,0,.62)');g.fillStyle=v;g.fillRect(0,0,W,H);g.restore()}
-function cardHTML(c){
+function cardHTML(c){const nb=x=>String(x||'').replace(/(\d) (?=[\d€])/g,'$1&nbsp;');c={...c,big:nb(c.big),sub:c.sub&&nb(c.sub)};
  if(c.type==='split')return `<div class="split">${c.items.map(it=>`<div><div class="pill" style="padding:12px 18px 0"><div class="big" style="font-size:118px;color:${it.color||'#fff'}">${it.big}</div></div><br><div class="sub" style="font-size:36px">${it.sub}</div></div>`).join('')}</div>`;
  if(c.type==='camps')return `<div class="big" style="font-size:190px">${c.big}</div><div class="camps"><div class="c a">${c.a||'POUR'}</div><div class="c b">${c.b||'CONTRE'}</div></div>`;
  const big=`<div class="big" style="${c.size?`font-size:${c.size}px;`:''}${c.color?`color:${c.color}`:''}">${c.big}</div>`;
@@ -65,7 +65,7 @@ window.__seek=t=>{
  $('flashw').style.opacity=C.cards.some(c=>t>=c.t0&&t<c.t0+.07)?.4:0;
  const L=LINES.find(l=>t>=l.t0-.15&&t<l.t1+.6);let h='';if(L)L.words.forEach(w=>{h+=`<span class="w${t>=w.t0?' on':''}">${w.w}</span> `});$('lyr').innerHTML=h};
 (async()=>{C=await (await fetch('/'+q.get('clip'))).json();window.__duration=C.duration;
- $('title').textContent=C.title;$('flash').textContent=C.kicker||'FLASH INFO';if(C.kicker&&C.kicker!=='FLASH INFO')$('flash').style.background='#7b2cff';$('ia').textContent=C.ia===false?'Photos : Wikimedia Commons':'Illustration IA';$('src').textContent='Sources : '+C.sources.join(' · ');$('part').textContent=C.part||'';
+ $('title').textContent=C.title;$('flash').textContent=C.kicker||'FLASH INFO';if(C.kicker&&C.kicker!=='FLASH INFO')$('flash').style.background='#7b2cff';$('ia').textContent=C.credit||(C.ia===false?'Photos : Wikimedia Commons':'Illustration IA');$('src').textContent='Sources : '+C.sources.join(' · ');$('part').textContent=C.part||'';
  $('cards').innerHTML=C.cards.map((c,i)=>`<div class="card" id="k${i}" style="${c.top?`top:${c.top}px`:''}">${cardHTML(c)}</div>`).join('');
  IM=await Promise.all(C.images.map(src=>new Promise(r=>{const i=new Image();i.onload=()=>r(i);i.src='/'+src})));
  // Plans : on alterne les 3 images, ~5 s par plan, zoom/pan différents à chaque passage.
