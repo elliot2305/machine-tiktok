@@ -1,0 +1,24 @@
+name: histoire-prepare
+# Étape 1 Histoire vraie : histoire folle non tragique + vérif 2 sources + paroles + prompt Suno + vraies photos (clé API, pas l'abonnement)
+on:
+  workflow_dispatch:
+  push:
+    paths: ['.github/histoire-trigger']
+permissions:
+  contents: write
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Brief
+        env: { ANTHROPIC_API_KEY: '${{ secrets.ANTHROPIC_API_KEY }}' }
+        run: python3 tools/histoire_prepare.py | tee /tmp/out.txt
+      - name: Photos Wikimedia Commons
+        run: |
+          python3 tools/fetch_photos.py $(head -1 /tmp/out.txt) || true
+          for d in data/actu/2*/; do python3 tools/fetch_photos.py $d || true; done
+      - name: Commit
+        run: |
+          git config user.name "machine-tiktok-bot"; git config user.email "actions@users.noreply.github.com"
+          git add data && git commit -m "histoire: brief $(head -1 /tmp/out.txt)" && git pull --rebase && git push
