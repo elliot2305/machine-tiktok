@@ -18,6 +18,7 @@ jobs:
       - uses: actions/setup-node@v4
         with: { node-version: 22 }
       - run: sudo apt-get update && sudo apt-get install -y ffmpeg bc
+        timeout-minutes: 8
       - run: npm install --no-audit --no-fund && npm install --no-save playwright@1.48.2 && npx playwright install --with-deps chromium
       - name: Rendu
         run: |
