@@ -7,7 +7,7 @@ const opt = (k, d) => { const i = args.indexOf('--' + k); return i >= 0 ? args[i
 const [ep, audio, out] = args;
 const FPS = +opt('fps', 30), WORKERS = +opt('workers', 4);
 const ROOT = path.resolve(__dirname, '..');
-const TYPES = { '.html': 'text/html', '.js': 'text/javascript', '.json': 'application/json', '.woff2': 'font/woff2', '.woff': 'font/woff' };
+const TYPES = { '.html': 'text/html', '.js': 'text/javascript', '.json': 'application/json', '.woff2': 'font/woff2', '.woff': 'font/woff', '.png': 'image/png', '.jpg': 'image/jpeg', '.webp': 'image/webp' };
 const server = http.createServer((req, res) => {
   const p = path.join(ROOT, decodeURIComponent(req.url.split('?')[0]));
   if (!p.startsWith(ROOT) || !fs.existsSync(p)) { res.writeHead(404); return res.end(); }
@@ -15,20 +15,24 @@ const server = http.createServer((req, res) => {
 });
 (async () => {
   await new Promise(r => server.listen(0, r));
-  const url = `http://127.0.0.1:${server.address().port}/scene/patate.html?ep=${ep}&rs=${opt('rs', '0.75')}&aa=${opt('aa', '0')}`;
+  // --scene actu : <ep> est alors le chemin du JSON du clip (data/actu/...json)
+  const url = opt('scene') === 'motionclip' ? `http://127.0.0.1:${server.address().port}/scene/motion_clip.html?d=${encodeURIComponent(ep)}`
+    : opt('scene') === 'motion' ? `http://127.0.0.1:${server.address().port}/scene/motion.html?d=${encodeURIComponent(ep)}`
+    : opt('scene') === 'actu' ? `http://127.0.0.1:${server.address().port}/scene/actu.html?clip=${encodeURIComponent(ep)}`
+    : `http://127.0.0.1:${server.address().port}/scene/patate.html?ep=${ep}&rs=${opt('rs', '0.75')}&aa=${opt('aa', '0')}`;
   const browser = await chromium.launch({ args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'] });
   const open = async () => { const pg = await browser.newPage({ viewport: { width: 1080, height: 1920 } }); pg.on('pageerror', e => console.error('PAGE', e.message)); pg.on('console', m => { if (m.type() === 'error') console.error('CONSOLE', m.text()); }); await pg.goto(url); await pg.waitForFunction('window.__ready === true', null, { timeout: 120000 }); return pg; };
   const stills = opt('stills');
   if (stills) {
     const pg = await open(); fs.mkdirSync(out, { recursive: true });
-    for (const t of stills.split(',').map(Number)) { await pg.evaluate(t => window.__seek(t), t); await pg.screenshot({ path: path.join(out, `ep${ep}_${t.toFixed(1)}.jpg`), type: 'jpeg', quality: 80 }); }
+    for (const t of stills.split(',').map(Number)) { await pg.evaluate(t => window.__seek(t), t); await pg.screenshot({ path: path.join(out, `${path.basename(ep, '.json')}_${t.toFixed(1)}.jpg`), type: 'jpeg', quality: 80 }); }
     await browser.close(); server.close(); return;
   }
   const probe = await open();
   const dur = await probe.evaluate('window.__duration'); await probe.close();
   const t0 = +opt('from', 0), t1 = +opt('to', dur);
   const N = Math.round((t1 - t0) * FPS);
-  const tmp = fs.mkdtempSync(path.join(require('os').tmpdir(), `ep${ep}-`));
+  const tmp = fs.mkdtempSync(path.join(require('os').tmpdir(), `ep${path.basename(String(ep), '.json')}-`));
   let done = 0; const started = Date.now();
   await Promise.all(Array.from({ length: WORKERS }, async (_, w) => {
     const pg = await open();

@@ -1,0 +1,107 @@
+{
+ "slug": "trombone-maison",
+ "title": "TROMBONE = MAISON",
+ "part": "HISTOIRE VRAIE",
+ "kicker": "HISTOIRE VRAIE",
+ "summary": "En juillet 2005, Kyle MacDonald, sans emploi, poste la photo d'un trombone rouge sur Internet et propose de l'échanger contre quelque chose de mieux. Quatorze trocs plus tard, un stylo poisson, une motoneige et un rôle dans un film l'ont mené jusqu'à une vraie maison.",
+ "facts": [
+  {
+   "fact": "Kyle MacDonald a posté la photo d'un trombone rouge sur son blog et sur Craigslist le 12 juillet 2005, pour l'échanger contre quelque chose de plus grand ou de mieux.",
+   "sources": [
+    "http://oneredpaperclip.blogspot.com/p/one-red-paperclip-project.html",
+    "https://fr.wikipedia.org/wiki/Kyle_MacDonald"
+   ]
+  },
+  {
+   "fact": "Il n'avait pas de travail. Il a décidé d'échanger le trombone sur un site web plutôt que d'envoyer un CV.",
+   "sources": [
+    "https://www.cbc.ca/news/canada/from-paper-clip-to-house-in-14-trades-1.573973",
+    "https://mymodernmet.com/kyle-macdonald-one-red-paperclip/"
+   ]
+  },
+  {
+   "fact": "Le premier troc a donné un stylo en forme de poisson, et ce stylo a été échangé contre une poignée de porte.",
+   "sources": [
+    "http://oneredpaperclip.blogspot.com/p/one-red-paperclip-project.html",
+    "https://ici.radio-canada.ca/nouvelle/314405/trombone2"
+   ]
+  },
+  {
+   "fact": "Au fil des échanges, il a obtenu entre autres une génératrice, une motoneige, un contrat d'enregistrement de chanson et un après-midi avec Alice Cooper.",
+   "sources": [
+    "https://ici.radio-canada.ca/nouvelle/314405/trombone2",
+    "https://www.lechodemaskinonge.com/communaute/quarrivera-t-il-a-la-maison-au-trombone-rouge/"
+   ]
+  },
+  {
+   "fact": "L'après-midi avec Alice Cooper a été échangé contre une boule à neige du groupe KISS.",
+   "sources": [
+    "https://www.babelio.com/auteur/Kyle-MacDonald/56251",
+    "https://mymodernmet.com/kyle-macdonald-one-red-paperclip/"
+   ]
+  },
+  {
+   "fact": "L'acteur Corbin Bernsen, grand collectionneur de boules à neige, a proposé un rôle dans son film en échange de la boule à neige.",
+   "sources": [
+    "https://fr.wikipedia.org/wiki/Kyle_MacDonald",
+    "https://www.cbc.ca/news/canada/from-paper-clip-to-house-in-14-trades-1.573973"
+   ]
+  },
+  {
+   "fact": "Le rôle dans le film a été échangé contre une maison à deux étages à Kipling, en Saskatchewan (Canada), après 14 trocs, le 12 juillet 2006.",
+   "sources": [
+    "https://www.canadacool.com/location/red-paper-clip/",
+    "https://ici.radio-canada.ca/nouvelle/314405/trombone2"
+   ]
+  },
+  {
+   "fact": "Le total est de 14 échanges en un an environ.",
+   "sources": [
+    "https://en.wikipedia.org/wiki/One_red_paperclip",
+    "https://www.cbc.ca/news/canada/from-paper-clip-to-house-in-14-trades-1.573973"
+   ]
+  },
+  {
+   "fact": "Kyle et sa conjointe ont ensuite donné la maison à la ville. Elle est aujourd'hui un restaurant (le Paperclip Cottage Cafe), et la ville a érigé un trombone rouge géant en l'honneur de l'histoire.",
+   "sources": [
+    "https://ici.radio-canada.ca/nouvelle/794679/trombone-rouge-echange-maison-kipling-10-ans-tourisme-kyle-mcdonald",
+    "https://mymodernmet.com/kyle-macdonald-one-red-paperclip/"
+   ]
+  }
+ ],
+ "sources": [
+  "CBC News",
+  "Radio-Canada"
+ ],
+ "lyrics": "[Shout]\nUn trombone rouge... contre une maison !\n\n[Verse]\nJuillet deux mille cinq, Kyle n'a pas de boulot\nSur son bureau un trombone, il le poste sur le net, hello\nUn stylo poisson, une poignée de porte, c'est parti\nUne génératrice, une motoneige, le monde entier suit ça\n\n[Chorus]\nTroc, troc, troc, un trombone rouge !\nQuatorze échanges, et là tout bouge\nTroc, troc, troc, c'est pas possible !\nUn trombone, une maison, franchement c'est dingue !\n\n[Verse]\nUn après-midi avec Alice Cooper, hop, il l'échange encore\nContre une boule à neige KISS, franchement, qui fait ça encore ?\nUn acteur adore ça, Corbin Bernsen, il offre un rôle de ciné\nLa ville de Kipling dit : « Ce rôle, on te file les clés ! »\n\n[Chorus]\nTroc, troc, troc, un trombone rouge !\nQuatorze échanges, et là tout bouge\nTroc, troc, troc, c'est pas possible !\nUn trombone, une maison, franchement c'est dingue !",
+ "suno_style": "French urban pop afropop, bouncy percussion, catchy melodic rap-sung vocals, shouted hook, playful and upbeat, 100 bpm, big singalong chorus",
+ "cards": [
+  {
+   "at": 0,
+   "big": "UN TROMBONE = UNE MAISON",
+   "size": 130
+  },
+  {
+   "at": 0.14,
+   "big": "12 JUILLET 2005",
+   "sub": "un trombone rouge sur un bureau, zéro boulot"
+  },
+  {
+   "at": 0.74,
+   "big": "UN RÔLE DE FILM = UNE MAISON",
+   "color": "#ffd60a"
+  },
+  {
+   "at": 0.88,
+   "type": "camps",
+   "big": "T'AURAIS FAIT QUOI ?",
+   "a": "JE TENTE LE TROC",
+   "b": "JE GARDE MON TROMBONE"
+  }
+ ],
+ "commons_queries": [
+  "Kipling Saskatchewan red paperclip",
+  "red paper clip",
+  "Saskatchewan house prairie"
+ ]
+}
