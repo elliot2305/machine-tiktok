@@ -16,7 +16,8 @@ const server = http.createServer((req, res) => {
 (async () => {
   await new Promise(r => server.listen(0, r));
   // --scene actu : <ep> est alors le chemin du JSON du clip (data/actu/...json)
-  const url = opt('scene') === 'motion' ? `http://127.0.0.1:${server.address().port}/scene/motion.html?d=${encodeURIComponent(ep)}`
+  const url = opt('scene') === 'motionclip' ? `http://127.0.0.1:${server.address().port}/scene/motion_clip.html?d=${encodeURIComponent(ep)}`
+    : opt('scene') === 'motion' ? `http://127.0.0.1:${server.address().port}/scene/motion.html?d=${encodeURIComponent(ep)}`
     : opt('scene') === 'actu' ? `http://127.0.0.1:${server.address().port}/scene/actu.html?clip=${encodeURIComponent(ep)}`
     : `http://127.0.0.1:${server.address().port}/scene/patate.html?ep=${ep}&rs=${opt('rs', '0.75')}&aa=${opt('aa', '0')}`;
   const browser = await chromium.launch({ args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'] });

@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><title>Actu motion – clip</title>
+<!-- Actu en chanson v2, clip complet « Combien ils étaient ? » : motion 3D calé sur la chanson. Données : ?d=data/motion/<slug> -->
+<style>
+@font-face{font-family:Anton;src:url(../node_modules/@fontsource/anton/files/anton-latin-ext-400-normal.woff2)}
+@font-face{font-family:Anton;src:url(../node_modules/@fontsource/anton/files/anton-latin-400-normal.woff2)}
+html,body{margin:0;width:1080px;height:1920px;overflow:hidden;background:#05070f}
+#stage{position:absolute;inset:0}
+.ov{position:absolute;left:0;right:0;text-align:center;font-family:Anton;color:#fff;pointer-events:none}
+#tag{top:70px;left:50px;right:auto;font-size:34px;letter-spacing:4px;background:#ff2d3a;padding:6px 16px 2px}
+.card{opacity:0;padding:0 40px}
+.xl{font-size:200px;line-height:.9;letter-spacing:2px;text-shadow:0 10px 40px rgba(0,0,0,.6)}
+.l{font-size:150px;line-height:.92;letter-spacing:2px;text-shadow:0 10px 40px rgba(0,0,0,.6)}
+.m{font-size:96px;line-height:1;letter-spacing:2px}
+.y{color:#ffd60a}.b{color:#7fa6ff}.r{color:#ff6b74}
+.pill{display:inline-block;font-size:44px;letter-spacing:2px;padding:8px 22px 3px;margin-top:16px;background:#fff;color:#05070f}
+.pill.red{background:#ff2d3a;color:#fff}.pill.blue{background:#2f6bff;color:#fff}
+.cnt{top:430px;width:540px;opacity:0;padding:0}
+.cnt .n{font-size:118px;line-height:1;letter-spacing:1px;text-shadow:0 8px 30px rgba(0,0,0,.6)}
+.cnt .pill{font-size:40px;margin-top:10px}
+#cL{left:0;right:auto}#cL .n{color:#7fa6ff}
+#cR{left:540px;right:auto}#cR .n{color:#ff6b74}
+#hook span{display:inline-block;opacity:0}
+.duo{display:flex;justify-content:center;gap:40px;margin-top:40px}
+.duo div{font-size:96px;padding:20px 50px 8px}
+#band{bottom:0;height:640px;background:linear-gradient(rgba(5,7,15,0),rgba(5,7,15,.92) 45%)}
+#sub{bottom:300px;padding:0 60px;font-size:70px;line-height:1.05;text-shadow:0 4px 14px #000}
+#sub .w{color:rgba(255,255,255,.35)}#sub .w.on{color:#fff}
+#src{bottom:200px;font-family:Arial,Helvetica,sans-serif;font-weight:700;font-size:30px;opacity:.75}
+#flash{inset:0;background:#fff;opacity:0}
+</style></head><body>
+<div id="stage"></div>
+<div id="tag" class="ov">ACTU EN CHANSON</div>
+<div id="cards"></div>
+<div id="cL" class="ov cnt"><div class="n">0</div><div class="pill blue">SELON L'INTÉRIEUR</div></div>
+<div id="cR" class="ov cnt"><div class="n">0</div><div class="pill red">SELON LA CGT</div></div>
+<div id="band" class="ov"></div>
+<div id="sub" class="ov"></div>
+<div id="src" class="ov"></div>
+<div id="flash" class="ov"></div>
+<script type="importmap">{ "imports": { "three": "../node_modules/three/build/three.module.js" } }</script>
+<script type="module">
+import * as THREE from 'three';
+const $ = id => document.getElementById(id), q = new URLSearchParams(location.search);
+const C = await (await fetch('/' + q.get('d') + '/clip.json')).json(), DUR = C.duration;
+const cl = x => Math.max(0, Math.min(1, x)), eo = x => 1 - Math.pow(1 - cl(x), 3);
+const back = x => { x = cl(x); const c = 1.9; return 1 + (c + 1) * Math.pow(x - 1, 3) + c * Math.pow(x - 1, 2); };
+const win = (t, a, b, f = .3) => cl((t - a) / f) * (1 - cl((t - b) / f));   // présence avec fondu entrée/sortie
+let seed = 7; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+
+// ---------- 3D ----------
+const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+renderer.setPixelRatio(1); renderer.setSize(1080, 1920); renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.shadowMap.enabled = true; $('stage').appendChild(renderer.domElement);
+const scene = new THREE.Scene(); scene.background = new THREE.Color('#070b1c'); scene.fog = new THREE.Fog('#070b1c', 30, 70);
+const cam = new THREE.PerspectiveCamera(42, 1080 / 1920, .1, 200);
+scene.add(new THREE.HemisphereLight('#9fb4ff', '#120a1a', 1.1));
+const sun = new THREE.DirectionalLight('#ffffff', 2.2); sun.position.set(8, 20, 12); sun.castShadow = true;
+sun.shadow.mapSize.set(1024, 1024); Object.assign(sun.shadow.camera, { left: -20, right: 20, top: 20, bottom: -20 }); scene.add(sun);
+const floor = new THREE.Mesh(new THREE.CircleGeometry(60, 64), new THREE.MeshStandardMaterial({ color: '#10173a', roughness: .9 }));
+floor.rotation.x = -Math.PI / 2; floor.receiveShadow = true; scene.add(floor);
+const grid = new THREE.GridHelper(80, 40, '#2a3a8a', '#1a2560'); grid.position.y = .01; scene.add(grid);
+const M = new THREE.Matrix4(), Q = new THREE.Quaternion(), S = new THREE.Vector3(), V = new THREE.Vector3();
+
+// Petits personnages instanciés. fill = part visible (0..1), pres = présence globale (0..1).
+function people(n, color, place, opts = {}) {
+  const body = new THREE.InstancedMesh(new THREE.CapsuleGeometry(.28, .55, 4, 10), new THREE.MeshStandardMaterial({ color, roughness: .5 }), n);
+  const head = new THREE.InstancedMesh(new THREE.SphereGeometry(.24, 16, 12), new THREE.MeshStandardMaterial({ color: '#ffd9b8', roughness: .6 }), n);
+  const sign = new THREE.InstancedMesh(new THREE.BoxGeometry(.7, .45, .04), new THREE.MeshStandardMaterial({ color, emissive: color, emissiveIntensity: .5 }), n);
+  [body, head, sign].forEach(m => { m.castShadow = true; scene.add(m); });
+  const P = [...Array(n)].map((_, i) => ({ ...place(i), ph: rnd() * 6, sg: !opts.noSign && rnd() < .08 }));
+  return (t, fill, pres) => {
+    P.forEach((p, i) => {
+      const s = Math.max(1e-4, back(cl((fill * n - i) / 5)) * pres), hop = opts.still ? 0 : Math.abs(Math.sin(t * 6 + p.ph)) * .12;
+      S.set(s, s, s);
+      M.compose(V.set(p.x, .55 * s + hop + (p.y || 0), p.z), Q, S); body.setMatrixAt(i, M);
+      M.compose(V.set(p.x, 1.25 * s + hop + (p.y || 0), p.z), Q, S); head.setMatrixAt(i, M);
+      const ss = p.sg ? s : 1e-4; S.set(ss, ss, s);
+      M.compose(V.set(p.x, 2.05 * s + hop + Math.sin(t * 3 + p.ph) * .05, p.z), Q, S); sign.setMatrixAt(i, M);
+    });
+    [body, head, sign].forEach(m => m.instanceMatrix.needsUpdate = true);
+  };
+}
+function ring(color, x, sx, sz) { const r = new THREE.Mesh(new THREE.CircleGeometry(1, 48), new THREE.MeshBasicMaterial({ color, transparent: true, opacity: .22 }));
+  r.rotation.x = -Math.PI / 2; r.position.set(x, .02, 0); r.scale.set(sx, sz, 1); scene.add(r); return r; }
+// Ratio réel : 575 000 / 1 600 000 ≈ 0,36 -> 110 / 306 personnages.
+const crowdL = people(110, '#2f6bff', () => ({ x: -3.4 + (rnd() - .5) * 3.2, z: (rnd() - .5) * 4.5 })), ringL = ring('#2f6bff', -3.4, 2, 2.8);
+const crowdR = people(306, '#ff2d3a', () => ({ x: 3.0 + (rnd() - .5) * 4.6, z: (rnd() - .5) * 7.5 })), ringR = ring('#ff2d3a', 3.0, 2.85, 4.65);
+
+// Conférence sociale : une table, syndicats d'un côté (rouge), patronat de l'autre (gris).
+const table = new THREE.Group(); scene.add(table);
+const top = new THREE.Mesh(new THREE.BoxGeometry(9, .35, 2.6), new THREE.MeshStandardMaterial({ color: '#f2efe6', roughness: .6 })); top.position.y = 1.3; top.castShadow = true; top.receiveShadow = true; table.add(top);
+[[-4, -1], [4, -1], [-4, 1], [4, 1]].forEach(([x, z]) => { const l = new THREE.Mesh(new THREE.BoxGeometry(.25, 1.2, .25), new THREE.MeshStandardMaterial({ color: '#6b4a2b' })); l.position.set(x, .6, z); table.add(l); });
+const seatsA = people(7, '#ff2d3a', i => ({ x: -3.6 + i * 1.2, z: -2.0 }), { noSign: true, still: true });
+const seatsB = people(7, '#8a93a8', i => ({ x: -3.6 + i * 1.2, z: 2.0 }), { noSign: true, still: true });
+
+// Pièces du Smic
+const coinG = new THREE.CylinderGeometry(1.2, 1.2, .26, 48), coinM = new THREE.MeshStandardMaterial({ color: '#ffcf3a', emissive: '#7a5200', emissiveIntensity: .6, metalness: .6, roughness: .3 });
+const coins = [...Array(12)].map((_, i) => { const c = new THREE.Mesh(coinG, coinM); c.castShadow = true; c.position.set((rnd() - .5) * .25, 40, 4.2); scene.add(c); return c; });
+
+// ---------- Textes ----------
+const fmt = n => Math.round(n).toLocaleString('fr-FR').replace(/\s/g, ' ');
+const CARDS = [
+  { t0: 0, t1: 4.6, top: 200, id: 'hook', html: '<div class="xl"><span>COMBIEN</span><br><span>ILS</span> <span class="y">ÉTAIENT&nbsp;?</span></div>' },
+  { t0: 5.0, t1: 9.4, top: 230, html: '<div class="l">JEUDI <span class="y">5&nbsp;NOV.</span></div><div class="pill">GRÈVE POUR LES SALAIRES</div>' },
+  { t0: 24.0, t1: 26.3, top: 860, html: '<div class="l y" style="transform:rotate(-7deg)">PRESQUE ×3&nbsp;!</div>' },
+  { t0: 26.4, t1: 33.6, top: 200, html: '<div class="m">ALORS</div><div class="l y">QUI A RAISON&nbsp;?</div>' },
+  { t0: 34.3, t1: 41.6, top: 200, html: '<div class="l y">LUNDI 9&nbsp;NOV.</div><div class="m">À MATIGNON</div><div class="pill">CONFÉRENCE SOCIALE</div>' },
+  { t0: 37.1, t1: 41.6, top: 1120, html: '<div style="display:flex;justify-content:space-between;padding:0 30px"><div class="pill red" style="margin:0">SYNDICATS</div><div class="pill" style="margin:0;background:#8a93a8;color:#fff">PATRONAT</div></div>' },
+  { t0: 42.2, t1: 46.5, top: 220, html: '<div class="xl y">+100&nbsp;€</div><div class="pill">LA CFDT DEMANDE ÇA SUR LE SMIC</div>' },
+  { t0: 46.7, t1: 51.5, top: 220, html: '<div class="m">SMIC À</div><div class="xl y">1&nbsp;500&nbsp;€&nbsp;NET&nbsp;?</div><div class="pill">LE MINISTRE DU TRAVAIL : « IMPORTANT D\'ESSAYER »</div>' },
+  { t0: 56.2, t1: 58.8, top: 230, html: '<div class="l">LES SALAIRES</div><div class="l y">SUR LA TABLE</div>' },
+  { t0: 58.8, t1: 99, top: 230, html: '<div class="l">ET TOI,</div><div class="l y">T\'Y ÉTAIS&nbsp;?</div><div class="duo"><div style="background:#ff2d3a">OUI</div><div style="background:#2f6bff">NON</div></div>' },
+];
+$('cards').innerHTML = CARDS.map((c, i) => `<div class="ov card" id="${c.id || 'k' + i}" style="top:${c.top}px">${c.html}</div>`).join('');
+$('src').textContent = 'Sources : ' + C.sources.join(' · ');
+const FLASH = [5.0, 9.85, 18.07, 24.0, 34.3, 42.2, 46.7, 56.2];
+
+function frame(t) {
+  // Foules : défilé partiel à 5 s, CGT se remplit à 9,8 s, Intérieur à 18 s ; elles sortent pour Matignon et reviennent à 52 s.
+  const base = .15 * eo((t - 5) / 2.3);
+  const fR = Math.max(base, eo((t - 9.8) / 2.4)), fL = Math.max(base, eo((t - 18.0) / 2.6));
+  const pres = 1 - eo((t - 33.6) / .6) + eo((t - 51.7) / .6);
+  crowdL(t, fL, cl(pres)); crowdR(t, fR, cl(pres));
+  ringL.material.opacity = ringR.material.opacity = .22 * cl(pres);
+  const tp = win(t, 34.1, 51.4, .5); table.scale.setScalar(Math.max(1e-4, back(tp))); table.visible = tp > 0;
+  seatsA(t, cl((t - 36.9) / .8) * tp, tp > 0 ? 1 : 0); seatsB(t, cl((t - 37.6) / .8) * tp, tp > 0 ? 1 : 0);
+  coins.forEach((c, i) => {
+    const at = i < 4 ? 43.4 + i * .15 : 48.2 + (i - 4) * .12, k = eo((t - at) / .45), out = eo((t - 51.3) / .4);
+    c.position.y = 40 - (40 - (1.65 + i * .27)) * k - out * 10; c.rotation.y = t * 1.5 + i; c.visible = t > at - .5 && out < 1;
+  });
+  // Caméra : vue foules (actes 1 et 3), vue table (acte 2)
+  const a = eo(t / 3), b = eo((t - 33.8) / 1.2) * (1 - eo((t - 51.4) / 1.2));
+  const p1 = [Math.sin(t * .15) * 1.5, 16 - 5 * a, 34 - 6 * a], p2 = [Math.sin(t * .2) * 1.2, 8.5, 19];
+  cam.position.set(...p1.map((v, i) => v + (p2[i] - v) * b));
+  cam.lookAt(0, (-2.5 + a) * (1 - b) + 1.0 * b, 0);
+  renderer.render(scene, cam);
+
+  CARDS.forEach((c, i) => { const el = $(c.id || 'k' + i), on = t >= c.t0 && t < c.t1;
+    el.style.opacity = on ? Math.min(1, (c.t1 - t) / .2) : 0; if (on) el.style.transform = `scale(${1.2 - .2 * back((t - c.t0) / .3)})`; });
+  [...$('hook').querySelectorAll('span')].forEach((e, i) => { const k = back((t - [.35, .7, .85][i]) / .3); e.style.opacity = cl(k * 3); e.style.transform = `scale(${.4 + .6 * k})`; });
+  $('hook').style.transform = 'none';
+  const showC = win(t, 9.6, 33.6) + win(t, 51.9, 56.0);
+  $('cR').style.opacity = cl(showC); $('cL').style.opacity = cl(showC) * (t < 13.5 || t > 51 ? (t > 51 ? 1 : 0) : 1);
+  $('cR').querySelector('.n').textContent = t > 51 ? '1 600 000 ?' : fmt(1600000 * eo((t - 9.8) / 2.4));
+  $('cL').querySelector('.n').textContent = t > 51 ? '575 000 ?' : t < 18 ? '???' : fmt(575000 * eo((t - 18.0) / 2.6));
+  $('flash').style.opacity = FLASH.some(x => t >= x && t < x + .06) ? .22 : 0;
+  const L = C.lines.find(l => t >= l.t0 - .2 && t < l.t1 + .5); let h = '';
+  if (L) L.words.forEach(w => h += `<span class="w${t >= w.t0 ? ' on' : ''}">${w.w}</span> `);
+  $('sub').innerHTML = h;
+}
+await document.fonts.ready;
+window.__duration = DUR; window.__seek = frame; frame(0); window.__ready = true;
+</script></body></html>
