@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><title>Actu motion – aperçu</title>
+<!-- Actu en chanson v2 : motion graphics 3D, une idée par écran. Aperçu de style 10 s (sans son). -->
+<style>
+@font-face{font-family:Anton;src:url(../node_modules/@fontsource/anton/files/anton-latin-ext-400-normal.woff2)}
+@font-face{font-family:Anton;src:url(../node_modules/@fontsource/anton/files/anton-latin-400-normal.woff2)}
+html,body{margin:0;width:1080px;height:1920px;overflow:hidden;background:#05070f}
+#stage{position:absolute;inset:0}
+.ov{position:absolute;left:0;right:0;text-align:center;font-family:Anton;color:#fff;pointer-events:none}
+#tag{top:70px;left:50px;right:auto;font-size:34px;letter-spacing:4px;background:#ff2d3a;padding:6px 16px 2px}
+#hook{top:200px;font-size:200px;line-height:.9;letter-spacing:2px}
+#hook span{display:inline-block;opacity:0}
+#hook .y{color:#ffd60a}
+.cnt{top:520px;width:540px;opacity:0}
+.cnt .n{font-size:118px;line-height:1;letter-spacing:1px;text-shadow:0 8px 30px rgba(0,0,0,.6)}
+.cnt .l{display:inline-block;margin-top:10px;font-size:40px;letter-spacing:3px;padding:6px 18px 2px;color:#fff}
+#cL{left:0;right:auto}#cL .n{color:#7fa6ff}#cL .l{background:#2f6bff}
+#cR{left:540px;right:auto}#cR .n{color:#ff6b74}#cR .l{background:#ff2d3a}
+#stamp{top:860px;font-size:230px;color:#ffd60a;opacity:0;text-shadow:0 14px 0 #7a4b00,0 0 60px rgba(0,0,0,.6)}
+#smic{top:300px;opacity:0}
+#smic .a{font-size:90px;letter-spacing:3px;color:#fff}
+#smic .b{font-size:230px;line-height:.95;color:#ffd60a}
+#smic .c{display:inline-block;font-size:44px;background:#fff;color:#05070f;padding:6px 20px 2px;letter-spacing:2px}
+#sub{bottom:300px;padding:0 60px;font-size:70px;line-height:1.05;text-transform:uppercase;text-shadow:0 4px 14px #000}
+#sub .w{color:rgba(255,255,255,.35)}#sub .w.on{color:#fff}
+#src{bottom:200px;font-family:Arial,Helvetica,sans-serif;font-weight:700;font-size:30px;opacity:.75}
+#flash{inset:0;background:#fff;opacity:0}
+</style></head><body>
+<div id="stage"></div>
+<div id="tag" class="ov">ACTU EN CHANSON</div>
+<div id="hook" class="ov"><span>COMBIEN</span><br><span>ILS</span> <span class="y">ÉTAIENT ?</span></div>
+<div id="cL" class="ov cnt"><div class="n">0</div><div class="l">SELON L'INTÉRIEUR</div></div>
+<div id="cR" class="ov cnt"><div class="n">0</div><div class="l">SELON LA CGT</div></div>
+<div id="stamp" class="ov">×&nbsp;2,8&nbsp;?!</div>
+<div id="smic" class="ov"><div class="a">ET LE SMIC ?</div><div class="b">1&nbsp;500&nbsp;€</div><div class="c">NET, LE MINISTRE Y PENSE</div></div>
+<div id="sub" class="ov"></div>
+<div id="src" class="ov">Sources : franceinfo · France 24</div>
+<div id="flash" class="ov"></div>
+<script type="importmap">{ "imports": { "three": "../node_modules/three/build/three.module.js" } }</script>
+<script type="module">
+import * as THREE from 'three';
+const DUR = 10, $ = id => document.getElementById(id);
+const cl = x => Math.max(0, Math.min(1, x)), eo = x => 1 - Math.pow(1 - cl(x), 3);
+const back = x => { x = cl(x); const c = 1.9; return 1 + (c + 1) * Math.pow(x - 1, 3) + c * Math.pow(x - 1, 2); };
+let seed = 7; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+
+const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+renderer.setPixelRatio(1); renderer.setSize(1080, 1920); renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.shadowMap.enabled = true; $('stage').appendChild(renderer.domElement);
+const scene = new THREE.Scene(); scene.background = new THREE.Color('#070b1c'); scene.fog = new THREE.Fog('#070b1c', 30, 70);
+const cam = new THREE.PerspectiveCamera(42, 1080 / 1920, .1, 200);
+scene.add(new THREE.HemisphereLight('#9fb4ff', '#120a1a', 1.1));
+const sun = new THREE.DirectionalLight('#ffffff', 2.2); sun.position.set(8, 20, 12); sun.castShadow = true;
+sun.shadow.mapSize.set(1024, 1024); Object.assign(sun.shadow.camera, { left: -20, right: 20, top: 20, bottom: -20 }); scene.add(sun);
+const floor = new THREE.Mesh(new THREE.CircleGeometry(60, 64), new THREE.MeshStandardMaterial({ color: '#10173a', roughness: .9 }));
+floor.rotation.x = -Math.PI / 2; floor.receiveShadow = true; scene.add(floor);
+const grid = new THREE.GridHelper(80, 40, '#2a3a8a', '#1a2560'); grid.position.y = .01; scene.add(grid);
+
+// Foules : petits manifestants (corps capsule + tête), instanciés. Ratio réel 575 000 / 1 600 000 ≈ 0,36.
+function crowd(n, color, cx, w, d, t0, t1) {
+  const body = new THREE.InstancedMesh(new THREE.CapsuleGeometry(.28, .55, 4, 10), new THREE.MeshStandardMaterial({ color, roughness: .5 }), n);
+  const head = new THREE.InstancedMesh(new THREE.SphereGeometry(.24, 16, 12), new THREE.MeshStandardMaterial({ color: '#ffd9b8', roughness: .6 }), n);
+  const sign = new THREE.InstancedMesh(new THREE.BoxGeometry(.7, .45, .04), new THREE.MeshStandardMaterial({ color: '#ffffff', emissive: color, emissiveIntensity: .25 }), n);
+  [body, head, sign].forEach(m => { m.castShadow = true; scene.add(m); });
+  const P = [...Array(n)].map((_, i) => ({ x: cx + (rnd() - .5) * w, z: (rnd() - .5) * d, at: t0 + (t1 - t0) * (i / n) + rnd() * .15, ph: rnd() * 6, sg: rnd() < .25 }));
+  P.sort((a, b) => a.at - b.at);
+  const M = new THREE.Matrix4(), Q = new THREE.Quaternion(), S = new THREE.Vector3(), V = new THREE.Vector3();
+  return t => {
+    let shown = 0;
+    P.forEach((p, i) => {
+      const k = back((t - p.at) / .35); if (t > p.at) shown++;
+      const s = Math.max(1e-4, k), hop = Math.abs(Math.sin(t * 6 + p.ph)) * .12 * cl(t - p.at);
+      S.set(s, s, s);
+      M.compose(V.set(p.x, .55 * s + hop, p.z), Q, S); body.setMatrixAt(i, M);
+      M.compose(V.set(p.x, 1.25 * s + hop, p.z), Q, S); head.setMatrixAt(i, M);
+      S.set(p.sg ? s : 1e-4, p.sg ? s : 1e-4, s);
+      M.compose(V.set(p.x, 2.05 * s + hop + Math.sin(t * 3 + p.ph) * .05, p.z), Q, S); sign.setMatrixAt(i, M);
+    });
+    [body, head, sign].forEach(m => m.instanceMatrix.needsUpdate = true);
+    return shown / n;
+  };
+}
+const crowdL = crowd(110, '#2f6bff', -4.2, 5.2, 7, 2.4, 5.0);
+const crowdR = crowd(306, '#ff2d3a', 4.2, 6.4, 11, 2.4, 6.2);
+
+// Pièces du Smic qui s'empilent (acte 3)
+const coinG = new THREE.CylinderGeometry(1.1, 1.1, .22, 40), coinM = new THREE.MeshStandardMaterial({ color: '#ffc21a', metalness: .85, roughness: .28 });
+const coins = [...Array(14)].map((_, i) => { const c = new THREE.Mesh(coinG, coinM); c.castShadow = true; c.position.set((rnd() - .5) * .25, 30, -14); scene.add(c); return { c, at: 7.4 + i * .1 }; });
+
+const fmt = n => Math.round(n).toLocaleString('fr-FR').replace(/\s/g, ' ');
+const SUB = [[0.15, 'COMBIEN'], [.45, 'ILS'], [.65, 'ÉTAIENT ?'], [1.4, 'PERSONNE'], [1.8, 'EST'], [2.0, "D'ACCORD !"],
+  [3.2, 'LA'], [3.35, 'CGT'], [3.7, 'DIT'], [3.9, 'UN'], [4.0, 'MILLION'], [4.4, 'SIX'], [5.3, "L'INTÉRIEUR"], [5.9, 'EN'], [6.05, 'COMPTE'], [6.4, 'TROIS'], [6.6, 'FOIS'], [6.8, 'MOINS'],
+  [7.3, 'ET'], [7.45, 'LUNDI'], [7.9, 'TOUT'], [8.05, 'LE'], [8.15, 'MONDE'], [8.5, 'PARLE'], [8.8, 'DU'], [8.95, 'SMIC']];
+const lines = [[0, 2.9], [3.0, 7.2], [7.2, 10]];
+
+function frame(t) {
+  // Caméra : plongée large -> rase les foules -> remonte sur les pièces
+  const a = eo(t / 3), b = eo((t - 6.9) / 1.4);
+  cam.position.set(Math.sin(t * .12) * 2, 22 - 13 * a + 4 * b, 30 - 10 * a - 2 * b);
+  cam.lookAt(0, 2 + 3 * b, -2 - 9 * b);
+  const fL = crowdL(t), fR = crowdR(t);
+  coins.forEach(({ c, at }, i) => { const k = eo((t - at) / .45); c.position.y = 30 - (30 - (.11 + i * .23)) * k; c.rotation.y = t * 1.5 + i; });
+  renderer.render(scene, cam);
+  // Textes
+  const hs = $('hook').children; const ho = t < 2.7 ? 1 : 1 - eo((t - 2.7) / .25);
+  [...hs].filter(e => e.tagName === 'SPAN').forEach((e, i) => { const k = back((t - [.1, .4, .6][i]) / .3); e.style.opacity = Math.min(cl(k * 3), ho); e.style.transform = `scale(${.4 + .6 * k})`; });
+  const co = cl((t - 2.5) / .3) * (1 - cl((t - 7.0) / .3));
+  $('cL').style.opacity = co; $('cR').style.opacity = co;
+  $('cL').querySelector('.n').textContent = fmt(575000 * eo(fL * 1.02));
+  $('cR').querySelector('.n').textContent = fmt(1600000 * eo(fR * 1.02));
+  const sk = back((t - 6.3) / .3); $('stamp').style.opacity = t > 6.3 && t < 7.1 ? 1 : 0; $('stamp').style.transform = `rotate(-8deg) scale(${1.6 - .6 * sk})`;
+  const so = cl((t - 7.6) / .3); $('smic').style.opacity = so; $('smic').style.transform = `translateY(${(1 - eo((t - 7.6) / .4)) * 60}px)`;
+  $('flash').style.opacity = [2.4, 6.3, 7.4].some(x => t >= x && t < x + .06) ? .35 : 0;
+  const L = lines.find(([a, b]) => t >= a && t < b); let h = '';
+  if (L) SUB.filter(([s]) => s >= L[0] && s < L[1]).forEach(([s, w]) => h += `<span class="w${t >= s ? ' on' : ''}">${w}</span> `);
+  $('sub').innerHTML = h;
+}
+await document.fonts.ready;
+window.__duration = DUR; window.__seek = frame; frame(0); window.__ready = true;
+</script></body></html>
