@@ -11,7 +11,7 @@ html,body{margin:0;width:1080px;height:1920px;overflow:hidden;background:#05070f
 #hook{top:200px;font-size:200px;line-height:.9;letter-spacing:2px}
 #hook span{display:inline-block;opacity:0}
 #hook .y{color:#ffd60a}
-.cnt{top:520px;width:540px;opacity:0}
+.cnt{top:430px;width:540px;opacity:0}
 .cnt .n{font-size:118px;line-height:1;letter-spacing:1px;text-shadow:0 8px 30px rgba(0,0,0,.6)}
 .cnt .l{display:inline-block;margin-top:10px;font-size:40px;letter-spacing:3px;padding:6px 18px 2px;color:#fff}
 #cL{left:0;right:auto}#cL .n{color:#7fa6ff}#cL .l{background:#2f6bff}
@@ -89,7 +89,7 @@ const crowdR = crowd(306, '#ff2d3a', 3.0, 4.6, 7.5, 0.3, 6.2);
 
 // Pièces du Smic qui s'empilent (acte 3)
 const coinG = new THREE.CylinderGeometry(1.5, 1.5, .3, 48), coinM = new THREE.MeshStandardMaterial({ color: '#ffcf3a', emissive: '#7a5200', emissiveIntensity: .6, metalness: .6, roughness: .3 });
-const coins = [...Array(14)].map((_, i) => { const c = new THREE.Mesh(coinG, coinM); c.castShadow = true; c.position.set((rnd() - .5) * .3, 30, 2); scene.add(c); return { c, at: 7.4 + i * .1 }; });
+const coins = [...Array(10)].map((_, i) => { const c = new THREE.Mesh(coinG, coinM); c.castShadow = true; c.position.set((rnd() - .5) * .3, 30, 2); scene.add(c); return { c, at: 7.4 + i * .1 }; });
 
 const fmt = n => Math.round(n).toLocaleString('fr-FR').replace(/\s/g, ' ');
 const SUB = [[0.15, 'COMBIEN'], [.45, 'ILS'], [.65, 'ÉTAIENT ?'], [1.4, 'PERSONNE'], [1.8, 'EST'], [2.0, "D'ACCORD !"],
@@ -100,8 +100,8 @@ const lines = [[0, 2.9], [3.0, 7.2], [7.2, 10]];
 function frame(t) {
   // Caméra : plongée large -> rase les foules -> remonte sur les pièces
   const a = eo(t / 3), b = eo((t - 7.0) / 1.2);
-  cam.position.set(Math.sin(t * .15) * 1.5, 16 - 5 * a - 4 * b, 34 - 6 * a - 12 * b);
-  cam.lookAt(0, -2.5 + 1 * a + 2.5 * b, 0);
+  cam.position.set(Math.sin(t * .15) * 1.2, 14 - 4 * a - 3 * b, 27 - 5 * a - 7 * b);
+  cam.lookAt(0, 1.2 + 3.3 * b, 0);
   const out = (t - 7.0) / .5, fL = crowdL(t, out), fR = crowdR(t, out);
   coins.forEach(({ c, at }, i) => { const k = eo((t - at) / .45); c.position.y = 30 - (30 - (.15 + i * .31)) * k; c.rotation.y = t * 1.5 + i; });
   renderer.render(scene, cam);
